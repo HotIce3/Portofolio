@@ -513,6 +513,44 @@ app.get("/api/seed", async (req, res) => {
       `;
     }
 
+    // Seed skills
+    const existingSkills = await sql`SELECT id FROM skills LIMIT 1`;
+    
+    if (existingSkills.length === 0) {
+      const skillsData = [
+        // Frontend
+        { name: 'React', category: 'Frontend', proficiency: 90 },
+        { name: 'Vue.js', category: 'Frontend', proficiency: 80 },
+        { name: 'JavaScript', category: 'Frontend', proficiency: 95 },
+        { name: 'TypeScript', category: 'Frontend', proficiency: 85 },
+        { name: 'HTML5', category: 'Frontend', proficiency: 95 },
+        { name: 'CSS3', category: 'Frontend', proficiency: 90 },
+        { name: 'Tailwind CSS', category: 'Frontend', proficiency: 90 },
+        { name: 'Next.js', category: 'Frontend', proficiency: 85 },
+        // Backend
+        { name: 'Node.js', category: 'Backend', proficiency: 88 },
+        { name: 'Express.js', category: 'Backend', proficiency: 85 },
+        { name: 'PostgreSQL', category: 'Backend', proficiency: 80 },
+        { name: 'MongoDB', category: 'Backend', proficiency: 78 },
+        { name: 'Python', category: 'Backend', proficiency: 75 },
+        { name: 'REST API', category: 'Backend', proficiency: 90 },
+        // Tools
+        { name: 'Git', category: 'Tools', proficiency: 90 },
+        { name: 'Docker', category: 'Tools', proficiency: 70 },
+        { name: 'VS Code', category: 'Tools', proficiency: 95 },
+        { name: 'Figma', category: 'Tools', proficiency: 75 },
+        { name: 'Vercel', category: 'Tools', proficiency: 85 },
+        { name: 'GitHub', category: 'Tools', proficiency: 90 },
+      ];
+
+      for (const skill of skillsData) {
+        await sql`
+          INSERT INTO skills (name, category, proficiency)
+          VALUES (${skill.name}, ${skill.category}, ${skill.proficiency})
+        `;
+      }
+    }
+
     // Seed projects
     const existingProjects =
       await sql`SELECT id FROM projects WHERE slug = 'kopi-nusantara-brew'`;
