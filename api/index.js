@@ -522,10 +522,17 @@ app.get("/api/seed", async (req, res) => {
           'https://website-portofolio-ivory-mu.vercel.app/og-image.jpg',
           ARRAY['React', 'Tailwind CSS', 'Framer Motion', 'Vite'],
           'https://website-portofolio-ivory-mu.vercel.app/',
-          'https://github.com/HotIce3',
+          'https://github.com/HotIce3/Website-Portofolio',
           true,
           true
         )
+      `;
+    } else {
+      // Update existing project with correct github_url
+      await sql`
+        UPDATE projects 
+        SET github_url = 'https://github.com/HotIce3/Website-Portofolio'
+        WHERE slug = 'kopi-nusantara-brew'
       `;
     }
 
