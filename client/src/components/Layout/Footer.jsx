@@ -1,12 +1,6 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import {
-  FiGithub,
-  FiLinkedin,
-  FiTwitter,
-  FiMail,
-  FiHeart,
-} from "react-icons/fi";
+import { FiGithub, FiLinkedin, FiMail, FiHeart } from "react-icons/fi";
 
 export default function Footer() {
   const { t } = useTranslation();
@@ -15,18 +9,13 @@ export default function Footer() {
   const socialLinks = [
     {
       icon: FiGithub,
-      href: "https://github.com/filbertmatthew",
+      href: "https://github.com/HotIce3/",
       label: "GitHub",
     },
     {
       icon: FiLinkedin,
-      href: "https://linkedin.com/in/filbertmatthew",
+      href: "https://www.linkedin.com/in/fil-mat-b21958337/",
       label: "LinkedIn",
-    },
-    {
-      icon: FiTwitter,
-      href: "https://twitter.com/filbertmatthew",
-      label: "Twitter",
     },
     { icon: FiMail, href: "mailto:filbertmathew63@gmail.com", label: "Email" },
   ];

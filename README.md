@@ -215,8 +215,8 @@ MIT License - feel free to use this for your own portfolio!
 **Filbert Matthew**
 
 - Email: filbertmathew63@gmail.com
-- GitHub: [@filbertmatthew](https://github.com/filbertmatthew)
-- LinkedIn: [filbertmatthew](https://linkedin.com/in/filbertmatthew)
+- GitHub: [@filbertmatthew](https://github.com/HotIce3/)
+- LinkedIn: [filbertmatthew](https://www.linkedin.com/in/fil-mat-b21958337/)
 
 ---
 
