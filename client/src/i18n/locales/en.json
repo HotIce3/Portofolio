@@ -1,0 +1,105 @@
+{
+  "nav": {
+    "home": "Home",
+    "projects": "Projects",
+    "about": "About",
+    "contact": "Contact"
+  },
+  "hero": {
+    "greeting": "Hi, I'm",
+    "name": "Filbert Matthew",
+    "title": "Full Stack Web Developer",
+    "description": "I build modern, responsive, and user-friendly web applications. Let's turn your ideas into reality.",
+    "cta": "View My Work",
+    "contact": "Get In Touch"
+  },
+  "about": {
+    "title": "About Me",
+    "subtitle": "Get to know me better",
+    "description": "Passionate web developer with expertise in building modern web applications",
+    "skills": "Skills & Technologies",
+    "experience": "Work Experience",
+    "education": "Education",
+    "downloadCV": "Download CV",
+    "present": "Present"
+  },
+  "projects": {
+    "title": "My Projects",
+    "subtitle": "Check out my latest work",
+    "featured": "Featured Projects",
+    "viewAll": "View All Projects",
+    "viewProject": "View Project",
+    "viewCode": "View Code",
+    "liveDemo": "Live Demo",
+    "technologies": "Technologies",
+    "category": "Category",
+    "all": "All",
+    "noProjects": "No projects found"
+  },
+  "contact": {
+    "title": "Get In Touch",
+    "subtitle": "Have a project in mind? Let's talk!",
+    "name": "Your Name",
+    "email": "Your Email",
+    "subject": "Subject",
+    "message": "Your Message",
+    "send": "Send Message",
+    "sending": "Sending...",
+    "success": "Message sent successfully! I'll get back to you soon.",
+    "error": "Failed to send message. Please try again.",
+    "info": "Contact Information",
+    "location": "Location",
+    "followMe": "Follow Me"
+  },
+  "footer": {
+    "rights": "All rights reserved",
+    "madeWith": "Made with",
+    "by": "by"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Try Again",
+    "back": "Go Back",
+    "readMore": "Read More",
+    "showLess": "Show Less"
+  },
+  "theme": {
+    "light": "Light Mode",
+    "dark": "Dark Mode",
+    "toggle": "Toggle theme"
+  },
+  "language": {
+    "toggle": "Toggle language",
+    "en": "English",
+    "id": "Indonesia"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "loginTitle": "Welcome Back",
+    "loginSubtitle": "Sign in to access admin panel",
+    "loginButton": "Sign In",
+    "loginError": "Invalid email or password"
+  },
+  "admin": {
+    "dashboard": "Dashboard",
+    "projects": "Projects",
+    "messages": "Messages",
+    "profile": "Profile",
+    "settings": "Settings",
+    "totalProjects": "Total Projects",
+    "totalMessages": "Total Messages",
+    "unreadMessages": "Unread Messages",
+    "recentMessages": "Recent Messages",
+    "manageProjects": "Manage Projects",
+    "addProject": "Add Project",
+    "editProject": "Edit Project",
+    "deleteProject": "Delete Project",
+    "confirmDelete": "Are you sure you want to delete this?",
+    "save": "Save Changes",
+    "cancel": "Cancel"
+  }
+}

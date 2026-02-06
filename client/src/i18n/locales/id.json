@@ -1,0 +1,105 @@
+{
+  "nav": {
+    "home": "Beranda",
+    "projects": "Proyek",
+    "about": "Tentang",
+    "contact": "Kontak"
+  },
+  "hero": {
+    "greeting": "Hai, Saya",
+    "name": "Filbert Matthew",
+    "title": "Full Stack Web Developer",
+    "description": "Saya membangun aplikasi web modern, responsif, dan user-friendly. Mari wujudkan ide Anda menjadi kenyataan.",
+    "cta": "Lihat Karya Saya",
+    "contact": "Hubungi Saya"
+  },
+  "about": {
+    "title": "Tentang Saya",
+    "subtitle": "Kenali saya lebih dekat",
+    "description": "Web developer yang passionate dalam membangun aplikasi web modern",
+    "skills": "Keahlian & Teknologi",
+    "experience": "Pengalaman Kerja",
+    "education": "Pendidikan",
+    "downloadCV": "Unduh CV",
+    "present": "Sekarang"
+  },
+  "projects": {
+    "title": "Proyek Saya",
+    "subtitle": "Lihat karya terbaru saya",
+    "featured": "Proyek Unggulan",
+    "viewAll": "Lihat Semua Proyek",
+    "viewProject": "Lihat Proyek",
+    "viewCode": "Lihat Kode",
+    "liveDemo": "Demo Langsung",
+    "technologies": "Teknologi",
+    "category": "Kategori",
+    "all": "Semua",
+    "noProjects": "Tidak ada proyek ditemukan"
+  },
+  "contact": {
+    "title": "Hubungi Saya",
+    "subtitle": "Punya proyek dalam pikiran? Ayo bicara!",
+    "name": "Nama Anda",
+    "email": "Email Anda",
+    "subject": "Subjek",
+    "message": "Pesan Anda",
+    "send": "Kirim Pesan",
+    "sending": "Mengirim...",
+    "success": "Pesan berhasil dikirim! Saya akan segera menghubungi Anda.",
+    "error": "Gagal mengirim pesan. Silakan coba lagi.",
+    "info": "Informasi Kontak",
+    "location": "Lokasi",
+    "followMe": "Ikuti Saya"
+  },
+  "footer": {
+    "rights": "Hak cipta dilindungi",
+    "madeWith": "Dibuat dengan",
+    "by": "oleh"
+  },
+  "common": {
+    "loading": "Memuat...",
+    "error": "Terjadi kesalahan",
+    "retry": "Coba Lagi",
+    "back": "Kembali",
+    "readMore": "Baca Selengkapnya",
+    "showLess": "Tampilkan Lebih Sedikit"
+  },
+  "theme": {
+    "light": "Mode Terang",
+    "dark": "Mode Gelap",
+    "toggle": "Ganti tema"
+  },
+  "language": {
+    "toggle": "Ganti bahasa",
+    "en": "English",
+    "id": "Indonesia"
+  },
+  "auth": {
+    "login": "Masuk",
+    "logout": "Keluar",
+    "email": "Email",
+    "password": "Kata Sandi",
+    "loginTitle": "Selamat Datang Kembali",
+    "loginSubtitle": "Masuk untuk mengakses panel admin",
+    "loginButton": "Masuk",
+    "loginError": "Email atau kata sandi salah"
+  },
+  "admin": {
+    "dashboard": "Dasbor",
+    "projects": "Proyek",
+    "messages": "Pesan",
+    "profile": "Profil",
+    "settings": "Pengaturan",
+    "totalProjects": "Total Proyek",
+    "totalMessages": "Total Pesan",
+    "unreadMessages": "Pesan Belum Dibaca",
+    "recentMessages": "Pesan Terbaru",
+    "manageProjects": "Kelola Proyek",
+    "addProject": "Tambah Proyek",
+    "editProject": "Edit Proyek",
+    "deleteProject": "Hapus Proyek",
+    "confirmDelete": "Apakah Anda yakin ingin menghapus ini?",
+    "save": "Simpan Perubahan",
+    "cancel": "Batal"
+  }
+}
