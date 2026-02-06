@@ -38,6 +38,17 @@ app.get("/api/profile", async (req, res) => {
   }
 });
 
+// Get skills only
+app.get("/api/profile/skills", async (req, res) => {
+  try {
+    const skills = await sql`SELECT * FROM skills ORDER BY category, name`;
+    res.json(skills);
+  } catch (error) {
+    console.error("Skills error:", error);
+    res.status(500).json({ error: "Failed to fetch skills" });
+  }
+});
+
 // Get projects
 app.get("/api/projects", async (req, res) => {
   try {
@@ -515,32 +526,32 @@ app.get("/api/seed", async (req, res) => {
 
     // Seed skills
     const existingSkills = await sql`SELECT id FROM skills LIMIT 1`;
-    
+
     if (existingSkills.length === 0) {
       const skillsData = [
         // Frontend
-        { name: 'React', category: 'Frontend', proficiency: 90 },
-        { name: 'Vue.js', category: 'Frontend', proficiency: 80 },
-        { name: 'JavaScript', category: 'Frontend', proficiency: 95 },
-        { name: 'TypeScript', category: 'Frontend', proficiency: 85 },
-        { name: 'HTML5', category: 'Frontend', proficiency: 95 },
-        { name: 'CSS3', category: 'Frontend', proficiency: 90 },
-        { name: 'Tailwind CSS', category: 'Frontend', proficiency: 90 },
-        { name: 'Next.js', category: 'Frontend', proficiency: 85 },
+        { name: "React", category: "Frontend", proficiency: 90 },
+        { name: "Vue.js", category: "Frontend", proficiency: 80 },
+        { name: "JavaScript", category: "Frontend", proficiency: 95 },
+        { name: "TypeScript", category: "Frontend", proficiency: 85 },
+        { name: "HTML5", category: "Frontend", proficiency: 95 },
+        { name: "CSS3", category: "Frontend", proficiency: 90 },
+        { name: "Tailwind CSS", category: "Frontend", proficiency: 90 },
+        { name: "Next.js", category: "Frontend", proficiency: 85 },
         // Backend
-        { name: 'Node.js', category: 'Backend', proficiency: 88 },
-        { name: 'Express.js', category: 'Backend', proficiency: 85 },
-        { name: 'PostgreSQL', category: 'Backend', proficiency: 80 },
-        { name: 'MongoDB', category: 'Backend', proficiency: 78 },
-        { name: 'Python', category: 'Backend', proficiency: 75 },
-        { name: 'REST API', category: 'Backend', proficiency: 90 },
+        { name: "Node.js", category: "Backend", proficiency: 88 },
+        { name: "Express.js", category: "Backend", proficiency: 85 },
+        { name: "PostgreSQL", category: "Backend", proficiency: 80 },
+        { name: "MongoDB", category: "Backend", proficiency: 78 },
+        { name: "Python", category: "Backend", proficiency: 75 },
+        { name: "REST API", category: "Backend", proficiency: 90 },
         // Tools
-        { name: 'Git', category: 'Tools', proficiency: 90 },
-        { name: 'Docker', category: 'Tools', proficiency: 70 },
-        { name: 'VS Code', category: 'Tools', proficiency: 95 },
-        { name: 'Figma', category: 'Tools', proficiency: 75 },
-        { name: 'Vercel', category: 'Tools', proficiency: 85 },
-        { name: 'GitHub', category: 'Tools', proficiency: 90 },
+        { name: "Git", category: "Tools", proficiency: 90 },
+        { name: "Docker", category: "Tools", proficiency: 70 },
+        { name: "VS Code", category: "Tools", proficiency: 95 },
+        { name: "Figma", category: "Tools", proficiency: 75 },
+        { name: "Vercel", category: "Tools", proficiency: 85 },
+        { name: "GitHub", category: "Tools", proficiency: 90 },
       ];
 
       for (const skill of skillsData) {
