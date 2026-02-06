@@ -502,8 +502,14 @@ app.get("/api/seed", async (req, res) => {
           'Passionate web developer with expertise in modern web technologies. I love creating beautiful, functional, and user-friendly websites and applications.',
           'filbertmathew63@gmail.com',
           'Indonesia',
-          '{"github": "https://github.com/HotIce3", "linkedin": "", "twitter": ""}'
+          '{"github": "https://github.com/HotIce3/", "linkedin": "https://www.linkedin.com/in/fil-mat-b21958337/", "twitter": ""}'
         )
+      `;
+    } else {
+      // Update existing profile with social links
+      await sql`
+        UPDATE profile 
+        SET social_links = '{"github": "https://github.com/HotIce3/", "linkedin": "https://www.linkedin.com/in/fil-mat-b21958337/", "twitter": ""}'
       `;
     }
 
