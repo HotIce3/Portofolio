@@ -52,7 +52,8 @@ app.get("/api/profile/skills", async (req, res) => {
 // Get experiences
 app.get("/api/profile/experiences", async (req, res) => {
   try {
-    const experiences = await sql`SELECT * FROM experiences ORDER BY start_date DESC`;
+    const experiences =
+      await sql`SELECT * FROM experiences ORDER BY start_date DESC`;
     res.json(experiences);
   } catch (error) {
     console.error("Experiences error:", error);
@@ -63,7 +64,8 @@ app.get("/api/profile/experiences", async (req, res) => {
 // Get education
 app.get("/api/profile/education", async (req, res) => {
   try {
-    const education = await sql`SELECT * FROM education ORDER BY start_date DESC`;
+    const education =
+      await sql`SELECT * FROM education ORDER BY start_date DESC`;
     res.json(education);
   } catch (error) {
     console.error("Education error:", error);
