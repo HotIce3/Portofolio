@@ -598,7 +598,7 @@ app.get("/api/seed", async (req, res) => {
           'kopi-nusantara-brew',
           'Website coffee shop premium dengan pengalaman kopi autentik Nusantara. Menampilkan menu, sistem pemesanan, dan desain elegan dengan tema kopi.',
           'Kopi Nusantara Brew adalah website untuk coffee shop yang menawarkan pengalaman kopi premium dengan cita rasa autentik Nusantara. Website ini memiliki fitur menu interaktif, keranjang belanja, mode gelap/terang, dan desain responsif yang menawan.',
-          'https://website-portofolio-ivory-mu.vercel.app/og-image.jpg',
+          'https://api.microlink.io/?url=https://website-portofolio-ivory-mu.vercel.app&screenshot=true&meta=false&embed=screenshot.url',
           ARRAY['React', 'Tailwind CSS', 'Framer Motion', 'Vite'],
           'https://website-portofolio-ivory-mu.vercel.app/',
           'https://website-portofolio-ivory-mu.vercel.app/',
@@ -607,10 +607,11 @@ app.get("/api/seed", async (req, res) => {
         )
       `;
     } else {
-      // Update existing project with correct github_url
+      // Update existing project with correct urls and thumbnail
       await sql`
         UPDATE projects 
-        SET github_url = 'https://website-portofolio-ivory-mu.vercel.app/'
+        SET github_url = 'https://website-portofolio-ivory-mu.vercel.app/',
+            thumbnail = 'https://api.microlink.io/?url=https://website-portofolio-ivory-mu.vercel.app&screenshot=true&meta=false&embed=screenshot.url'
         WHERE slug = 'kopi-nusantara-brew'
       `;
     }

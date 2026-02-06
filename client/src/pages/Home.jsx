@@ -237,10 +237,18 @@ export default function Home() {
                 transition={{ delay: index * 0.1 }}
                 className="card overflow-hidden group"
               >
-                <div className="h-48 bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center">
-                  <span className="text-4xl font-bold text-white opacity-50">
-                    {project.title.charAt(0)}
-                  </span>
+                <div className="h-48 bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center overflow-hidden">
+                  {project.thumbnail ? (
+                    <img
+                      src={project.thumbnail}
+                      alt={project.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    <span className="text-4xl font-bold text-white opacity-50">
+                      {project.title.charAt(0)}
+                    </span>
+                  )}
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl font-semibold mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
