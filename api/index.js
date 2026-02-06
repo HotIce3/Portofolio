@@ -114,7 +114,7 @@ app.post("/api/auth/login", async (req, res) => {
 
     // Simple password check (in production, use bcrypt)
     const bcrypt = await import("bcryptjs");
-    const validPassword = await bcrypt.compare(password, user.password);
+    const validPassword = await bcrypt.default.compare(password, user.password);
 
     if (!validPassword) {
       return res.status(401).json({ error: "Invalid credentials" });
@@ -477,7 +477,7 @@ app.get("/api/migrate", async (req, res) => {
 app.get("/api/seed", async (req, res) => {
   try {
     const bcrypt = await import("bcryptjs");
-    const hashedPassword = await bcrypt.hash("admin123", 10);
+    const hashedPassword = await bcrypt.default.hash("admin123", 10);
 
     // Check if admin exists
     const existingUser =
