@@ -508,8 +508,9 @@ app.get("/api/seed", async (req, res) => {
     }
 
     // Seed projects
-    const existingProjects = await sql`SELECT id FROM projects WHERE slug = 'kopi-nusantara-brew'`;
-    
+    const existingProjects =
+      await sql`SELECT id FROM projects WHERE slug = 'kopi-nusantara-brew'`;
+
     if (existingProjects.length === 0) {
       await sql`
         INSERT INTO projects (title, slug, description, content, thumbnail, tech_stack, demo_url, github_url, is_featured, is_published)
