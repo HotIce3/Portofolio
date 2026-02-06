@@ -181,26 +181,15 @@ export default function Projects() {
                     </div>
 
                     <div className="flex gap-4 pt-4 border-t border-gray-100 dark:border-gray-700">
-                      {project.live_url && (
+                      {project.demo_url && (
                         <a
-                          href={project.live_url}
+                          href={project.demo_url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center gap-2 text-sm font-medium text-primary-600 dark:text-primary-400 hover:underline"
                         >
                           <FiExternalLink className="w-4 h-4" />
                           {t("projects.liveDemo")}
-                        </a>
-                      )}
-                      {project.github_url && (
-                        <a
-                          href={project.github_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
-                        >
-                          <FiGithub className="w-4 h-4" />
-                          {t("projects.viewCode")}
                         </a>
                       )}
                     </div>
