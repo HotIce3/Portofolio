@@ -10,6 +10,28 @@ import {
   FiMail,
   FiExternalLink,
 } from "react-icons/fi";
+import {
+  SiReact,
+  SiVuedotjs,
+  SiJavascript,
+  SiTypescript,
+  SiHtml5,
+  SiCss3,
+  SiTailwindcss,
+  SiNextdotjs,
+  SiNodedotjs,
+  SiExpress,
+  SiPostgresql,
+  SiMongodb,
+  SiPython,
+  SiGit,
+  SiDocker,
+  SiVisualstudiocode,
+  SiFigma,
+  SiVercel,
+  SiGithub,
+} from "react-icons/si";
+import { TbApi } from "react-icons/tb";
 import { profileApi, projectsApi } from "../services/api";
 import { useLanguage } from "../contexts/LanguageContext";
 import LoadingSpinner from "../components/UI/LoadingSpinner";
@@ -142,20 +164,53 @@ export default function Home() {
           </motion.div>
 
           <div className="flex flex-wrap justify-center gap-4">
-            {skills.slice(0, 12).map((skill, index) => (
-              <motion.div
-                key={skill.id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.05 }}
-                className="px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-200"
-              >
-                <span className="font-medium text-gray-800 dark:text-gray-200">
-                  {skill.name}
-                </span>
-              </motion.div>
-            ))}
+            {skills.slice(0, 12).map((skill, index) => {
+              const skillIcons = {
+                'React': { icon: SiReact, color: '#61DAFB' },
+                'Vue.js': { icon: SiVuedotjs, color: '#4FC08D' },
+                'JavaScript': { icon: SiJavascript, color: '#F7DF1E' },
+                'TypeScript': { icon: SiTypescript, color: '#3178C6' },
+                'HTML5': { icon: SiHtml5, color: '#E34F26' },
+                'CSS3': { icon: SiCss3, color: '#1572B6' },
+                'Tailwind CSS': { icon: SiTailwindcss, color: '#06B6D4' },
+                'Next.js': { icon: SiNextdotjs, color: '#000000' },
+                'Node.js': { icon: SiNodedotjs, color: '#339933' },
+                'Express.js': { icon: SiExpress, color: '#000000' },
+                'PostgreSQL': { icon: SiPostgresql, color: '#4169E1' },
+                'MongoDB': { icon: SiMongodb, color: '#47A248' },
+                'Python': { icon: SiPython, color: '#3776AB' },
+                'REST API': { icon: TbApi, color: '#6366F1' },
+                'Git': { icon: SiGit, color: '#F05032' },
+                'Docker': { icon: SiDocker, color: '#2496ED' },
+                'VS Code': { icon: SiVisualstudiocode, color: '#007ACC' },
+                'Figma': { icon: SiFigma, color: '#F24E1E' },
+                'Vercel': { icon: SiVercel, color: '#000000' },
+                'GitHub': { icon: SiGithub, color: '#181717' },
+              };
+              const skillData = skillIcons[skill.name];
+              const IconComponent = skillData?.icon;
+              
+              return (
+                <motion.div
+                  key={skill.id}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.05 }}
+                  className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-200"
+                >
+                  {IconComponent && (
+                    <IconComponent 
+                      className="w-5 h-5" 
+                      style={{ color: skillData.color }}
+                    />
+                  )}
+                  <span className="font-medium text-gray-800 dark:text-gray-200">
+                    {skill.name}
+                  </span>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
