@@ -125,9 +125,9 @@ export default function Projects() {
                   className="card overflow-hidden group"
                 >
                   <div className="relative h-52 bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center overflow-hidden">
-                    {project.thumbnail_url ? (
+                    {project.thumbnail ? (
                       <img
-                        src={project.thumbnail_url}
+                        src={project.thumbnail}
                         alt={project.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
@@ -165,7 +165,7 @@ export default function Projects() {
                     </p>
 
                     <div className="flex flex-wrap gap-2 mb-4">
-                      {project.technologies?.slice(0, 5).map((tech) => (
+                      {project.tech_stack?.slice(0, 5).map((tech) => (
                         <span
                           key={tech}
                           className="px-2 py-1 text-xs font-medium bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded"
@@ -173,9 +173,9 @@ export default function Projects() {
                           {tech}
                         </span>
                       ))}
-                      {project.technologies?.length > 5 && (
+                      {project.tech_stack?.length > 5 && (
                         <span className="px-2 py-1 text-xs text-gray-500 dark:text-gray-400">
-                          +{project.technologies.length - 5}
+                          +{project.tech_stack.length - 5}
                         </span>
                       )}
                     </div>

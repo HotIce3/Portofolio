@@ -262,7 +262,7 @@ export default function Home() {
                       : project.description}
                   </p>
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {project.technologies?.slice(0, 4).map((tech) => (
+                    {project.tech_stack?.slice(0, 4).map((tech) => (
                       <span
                         key={tech}
                         className="px-2 py-1 text-xs font-medium bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded"
@@ -272,9 +272,9 @@ export default function Home() {
                     ))}
                   </div>
                   <div className="flex gap-3">
-                    {project.live_url && (
+                    {project.demo_url && (
                       <a
-                        href={project.live_url}
+                        href={project.demo_url}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-1 text-sm text-primary-600 dark:text-primary-400 hover:underline"
