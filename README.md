@@ -2,8 +2,6 @@
 
 A modern, fullstack portfolio website built with React, Node.js, and PostgreSQL. Features a beautiful minimalist design with dark/light mode and multi-language support.
 
-![Portfolio Preview](https://via.placeholder.com/800x400?text=Portfolio+Preview)
-
 ## ✨ Features
 
 - **Modern Design** - Clean, minimalist, and professional
