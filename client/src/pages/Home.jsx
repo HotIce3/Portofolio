@@ -283,17 +283,6 @@ export default function Home() {
                         {t("projects.liveDemo")}
                       </a>
                     )}
-                    {project.github_url && (
-                      <a
-                        href={project.github_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
-                      >
-                        <FiGithub className="w-4 h-4" />
-                        {t("projects.viewCode")}
-                      </a>
-                    )}
                   </div>
                 </div>
               </motion.article>
