@@ -106,6 +106,24 @@ const seed = async () => {
     // Add sample projects
     const projects = [
       {
+        title: "Financial Manage Dwivan",
+        title_id: "Financial Manage Dwivan",
+        slug: "financial-manage-dwivan",
+        description:
+          "A smart financial planning app for tracking expenses, calculating remaining budget, and getting personalized investment recommendations.",
+        description_id:
+          "Aplikasi smart financial planning untuk melacak pengeluaran, menghitung sisa anggaran, dan mendapatkan rekomendasi investasi yang dipersonalisasi.",
+        technologies: [
+          "React",
+          "Vite",
+          "Tailwind CSS",
+          "Framer Motion",
+          "TypeScript",
+        ],
+        category: "Finance",
+        featured: true,
+      },
+      {
         title: "E-Commerce Platform",
         title_id: "Platform E-Commerce",
         slug: "e-commerce-platform",

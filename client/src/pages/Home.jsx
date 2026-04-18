@@ -35,6 +35,7 @@ import { TbApi } from "react-icons/tb";
 import { profileApi, projectsApi } from "../services/api";
 import { useLanguage } from "../contexts/LanguageContext";
 import LoadingSpinner from "../components/UI/LoadingSpinner";
+import { mergeFeaturedProjects } from "../data/projects";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -53,7 +54,7 @@ export default function Home() {
           profileApi.getSkills(),
         ]);
         setProfile(profileRes.data.profile);
-        setProjects(projectsRes.data.slice(0, 3));
+        setProjects(mergeFeaturedProjects(projectsRes.data).slice(0, 3));
         setSkills(skillsRes.data);
       } catch (error) {
         console.error("Failed to fetch data:", error);

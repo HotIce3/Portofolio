@@ -7,6 +7,7 @@ import { FiExternalLink, FiGithub, FiFilter } from "react-icons/fi";
 import { projectsApi } from "../services/api";
 import { useLanguage } from "../contexts/LanguageContext";
 import LoadingSpinner from "../components/UI/LoadingSpinner";
+import { mergeFeaturedProjects } from "../data/projects";
 
 export default function Projects() {
   const { t } = useTranslation();
@@ -21,12 +22,13 @@ export default function Projects() {
     const fetchProjects = async () => {
       try {
         const response = await projectsApi.getAll();
-        setProjects(response.data);
-        setFilteredProjects(response.data);
+        const mergedProjects = mergeFeaturedProjects(response.data);
+        setProjects(mergedProjects);
+        setFilteredProjects(mergedProjects);
 
         // Extract unique categories
         const cats = [
-          ...new Set(response.data.map((p) => p.category).filter(Boolean)),
+          ...new Set(mergedProjects.map((p) => p.category).filter(Boolean)),
         ];
         setCategories(cats);
       } catch (error) {
