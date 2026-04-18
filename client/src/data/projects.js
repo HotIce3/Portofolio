@@ -8,8 +8,10 @@ const featuredProjects = [
       "A smart financial planning app for tracking expenses, calculating remaining budget, and getting personalized investment recommendations.",
     description_id:
       "Aplikasi smart financial planning untuk melacak pengeluaran, menghitung sisa anggaran, dan mendapatkan rekomendasi investasi yang dipersonalisasi.",
-    thumbnail: "",
-    thumbnail_url: "",
+    thumbnail:
+      "https://api.microlink.io/?url=https://financial-manage-dwivan.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
+    thumbnail_url:
+      "https://api.microlink.io/?url=https://financial-manage-dwivan.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
     demo_url: "https://financial-manage-dwivan.vercel.app/",
     live_url: "https://financial-manage-dwivan.vercel.app/",
     github_url: "https://github.com/rvnary/Financial-Manage-Dwivan",
