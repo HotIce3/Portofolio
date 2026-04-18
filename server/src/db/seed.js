@@ -106,18 +106,6 @@ const seed = async () => {
     // Add sample projects
     const projects = [
       {
-        title: "Financial Manage Dwivan Front Page",
-        title_id: "Front Page Financial Manage Dwivan",
-        slug: "financial-manage-dwivan-front-page",
-        description:
-          "The landing page for Financial Manage Dwivan, a smart financial planning website for tracking expenses and getting investment recommendations.",
-        description_id:
-          "Halaman depan Financial Manage Dwivan, website smart financial planning untuk melacak pengeluaran dan mendapatkan rekomendasi investasi.",
-        technologies: ["React", "Vite", "Tailwind CSS", "Framer Motion"],
-        category: "Landing Page",
-        featured: true,
-      },
-      {
         title: "Financial Manage Dwivan",
         title_id: "Financial Manage Dwivan",
         slug: "financial-manage-dwivan",

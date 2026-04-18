@@ -32,27 +32,6 @@ const featuredProjects = [
     status: "published",
     sort_order: -1,
   },
-  {
-    id: "financial-manage-dwivan-front-page",
-    title: "Financial Manage Dwivan Front Page",
-    title_id: "Front Page Financial Manage Dwivan",
-    slug: "financial-manage-dwivan-front-page",
-    description:
-      "The landing page for Financial Manage Dwivan, a smart financial planning website for tracking expenses and getting investment recommendations.",
-    description_id:
-      "Halaman depan Financial Manage Dwivan, website smart financial planning untuk melacak pengeluaran dan mendapatkan rekomendasi investasi.",
-    thumbnail: "",
-    thumbnail_url: "",
-    demo_url: "https://financial-manage-dwivan.vercel.app/",
-    live_url: "https://financial-manage-dwivan.vercel.app/",
-    github_url: "https://github.com/rvnary/Financial-Manage-Dwivan",
-    tech_stack: ["React", "Vite", "Tailwind CSS", "Framer Motion"],
-    technologies: ["React", "Vite", "Tailwind CSS", "Framer Motion"],
-    category: "Landing Page",
-    featured: true,
-    status: "published",
-    sort_order: -2,
-  },
 ];
 
 export const mergeFeaturedProjects = (projects = []) => {
