@@ -1,12 +1,12 @@
 # 🚀 Filbert Matthew - Portfolio Website
 
-A modern, fullstack portfolio website built with React, Node.js, and PostgreSQL. Features a beautiful minimalist design with dark/light mode and multi-language support.
+A modern, fullstack portfolio website built with React, Node.js, and PostgreSQL. Features a beautiful 3D immersive design with multi-language support and database-driven project management.
 
 ## ✨ Features
 
-- **Modern Design** - Clean, minimalist, and professional
-- **Dark/Light Mode** - Toggle between themes
+- **3D Immersive Design** - Modern, professional design with 3D elements and animations
 - **Multi-language** - English and Indonesian support
+- **Database-Driven Projects** - Projects fetched from PostgreSQL database
 - **Admin Panel** - Manage projects, messages, and profile
 - **Contact Form** - Receive messages from visitors
 - **Responsive** - Looks great on all devices
@@ -23,6 +23,7 @@ A modern, fullstack portfolio website built with React, Node.js, and PostgreSQL.
 - Framer Motion
 - React Router
 - i18next
+- Three.js (3D animations)
 
 ### Backend
 
@@ -31,6 +32,14 @@ A modern, fullstack portfolio website built with React, Node.js, and PostgreSQL.
 - PostgreSQL (Neon)
 - JWT Authentication
 - bcrypt
+
+### Database Schema
+
+- **Projects**: Dynamic project management with tech stack, thumbnails, and demo links
+- **Profile**: Personal information and social links
+- **Skills**: Technical skills with proficiency levels
+- **Contact Messages**: Visitor message collection
+- **Experience/Education**: Professional background
 
 ### Deployment
 
@@ -106,11 +115,19 @@ filbert-matthew-portfolio/
    npm run db:migrate
    ```
 
-5. **Seed the database (optional)**
+5. **Seed the database (recommended)**
 
+   This will add sample projects including the Financial Management project:
+   
    ```bash
    npm run db:seed
    ```
+
+   **Sample Projects Added:**
+   - Kopi Nusantara Brew (Coffee Shop Website)
+   - Financial Manage Dwivan (Financial Planning App)
+   - E-Commerce Platform
+   - Task Management App
 
 6. **Start development servers**
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
@@ -9,6 +9,7 @@ import {
   FiLinkedin,
   FiMail,
   FiExternalLink,
+  FiChevronDown,
 } from "react-icons/fi";
 import {
   SiReact,
@@ -35,39 +36,85 @@ import { TbApi } from "react-icons/tb";
 import { profileApi, projectsApi } from "../services/api";
 import { useLanguage } from "../contexts/LanguageContext";
 import LoadingSpinner from "../components/UI/LoadingSpinner";
-import { mergeFeaturedProjects } from "../data/projects";
+
+import HeroScene from "../components/three/HeroScene";
+import SkillsScene from "../components/three/SkillsScene";
+import ProjectsScene from "../components/three/ProjectsScene";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, delay: i * 0.1, ease: "easeOut" },
+  }),
+};
+
+const staggerContainer = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.08 },
+  },
+};
 
 export default function Home() {
   const { t } = useTranslation();
   const { language } = useLanguage();
-  const [profile, setProfile] = useState(null);
+  // Fallback data so 3D portfolio renders even without backend
+  const fallbackProfile = {
+    name: "Filbert Matthew",
+    title: "Full Stack Web Developer",
+    bio: "Passionate Full Stack Developer creating modern web applications with cutting-edge technologies. Experienced in React, Node.js, and cloud deployment.",
+    bio_id: "Full Stack Developer yang bersemangat dalam membuat aplikasi web modern dengan teknologi terkini. Berpengalaman di React, Node.js, dan cloud deployment.",
+    email: "filbertmathew63@gmail.com",
+    github_url: "https://github.com/HotIce3/",
+    linkedin_url: "https://www.linkedin.com/in/fil-mat-b21958337/",
+  };
+
+  const fallbackSkills = [
+    { id: 1, name: "React", category: "Frontend", proficiency: 90 },
+    { id: 2, name: "JavaScript", category: "Frontend", proficiency: 92 },
+    { id: 3, name: "TypeScript", category: "Frontend", proficiency: 80 },
+    { id: 4, name: "Node.js", category: "Backend", proficiency: 85 },
+    { id: 5, name: "PostgreSQL", category: "Backend", proficiency: 82 },
+    { id: 6, name: "Tailwind CSS", category: "Frontend", proficiency: 88 },
+    { id: 7, name: "Python", category: "Backend", proficiency: 75 },
+    { id: 8, name: "Next.js", category: "Frontend", proficiency: 78 },
+    { id: 9, name: "Git", category: "Tools", proficiency: 88 },
+    { id: 10, name: "Docker", category: "Tools", proficiency: 70 },
+    { id: 11, name: "Vue.js", category: "Frontend", proficiency: 72 },
+    { id: 12, name: "MongoDB", category: "Backend", proficiency: 76 },
+  ];
+
+  const [profile, setProfile] = useState(fallbackProfile);
   const [projects, setProjects] = useState([]);
-  const [skills, setSkills] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [skills, setSkills] = useState(fallbackSkills);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [profileRes, projectsRes, skillsRes] = await Promise.all([
+        const [profileRes, projectsRes, skillsRes] = await Promise.allSettled([
           profileApi.get(),
           projectsApi.getAll({ featured: true }),
           profileApi.getSkills(),
         ]);
-        setProfile(profileRes.data.profile);
-        setProjects(mergeFeaturedProjects(projectsRes.data).slice(0, 3));
-        setSkills(skillsRes.data);
+        if (profileRes.status === "fulfilled") {
+          setProfile(profileRes.value.data.profile || fallbackProfile);
+        }
+        if (projectsRes.status === "fulfilled") {
+          const data = projectsRes.value.data;
+          setProjects(Array.isArray(data) ? data.slice(0, 3) : []);
+        }
+        if (skillsRes.status === "fulfilled") {
+          setSkills(skillsRes.value.data.length ? skillsRes.value.data : fallbackSkills);
+        }
       } catch (error) {
         console.error("Failed to fetch data:", error);
-      } finally {
-        setLoading(false);
       }
     };
     fetchData();
   }, []);
-
-  if (loading) {
-    return <LoadingSpinner fullScreen />;
-  }
 
   const socialLinks = [
     { icon: FiGithub, href: profile?.github_url, label: "GitHub" },
@@ -75,48 +122,105 @@ export default function Home() {
     { icon: FiMail, href: `mailto:${profile?.email}`, label: "Email" },
   ];
 
+  const skillIcons = {
+    React: { icon: SiReact, color: "#61DAFB" },
+    "Vue.js": { icon: SiVuedotjs, color: "#4FC08D" },
+    JavaScript: { icon: SiJavascript, color: "#F7DF1E" },
+    TypeScript: { icon: SiTypescript, color: "#3178C6" },
+    HTML5: { icon: SiHtml5, color: "#E34F26" },
+    CSS3: { icon: SiCss3, color: "#1572B6" },
+    "Tailwind CSS": { icon: SiTailwindcss, color: "#06B6D4" },
+    "Next.js": { icon: SiNextdotjs, color: "#a78bfa" },
+    "Node.js": { icon: SiNodedotjs, color: "#339933" },
+    "Express.js": { icon: SiExpress, color: "#a78bfa" },
+    PostgreSQL: { icon: SiPostgresql, color: "#4169E1" },
+    MongoDB: { icon: SiMongodb, color: "#47A248" },
+    Python: { icon: SiPython, color: "#3776AB" },
+    "REST API": { icon: TbApi, color: "#6366F1" },
+    Git: { icon: SiGit, color: "#F05032" },
+    Docker: { icon: SiDocker, color: "#2496ED" },
+    "VS Code": { icon: SiVisualstudiocode, color: "#007ACC" },
+    Figma: { icon: SiFigma, color: "#F24E1E" },
+    Vercel: { icon: SiVercel, color: "#a78bfa" },
+    GitHub: { icon: SiGithub, color: "#a78bfa" },
+  };
+
   return (
     <>
       <Helmet>
-        <title>Filbert Matthew - Web Developer</title>
-        <meta name="description" content="Full Stack Web Developer Portfolio" />
+        <title>Filbert Matthew - Web Developer | 3D Portfolio</title>
+        <meta
+          name="description"
+          content="Full Stack Web Developer Portfolio - Immersive 3D Experience"
+        />
       </Helmet>
 
-      {/* Hero Section */}
-      <section className="min-h-screen flex items-center pt-16 md:pt-0">
-        <div className="container-custom">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+      {/* ═══════════════════════════════════════════ */}
+      {/* HERO SECTION WITH 3D BACKGROUND            */}
+      {/* ═══════════════════════════════════════════ */}
+      <section className="hero-3d-section">
+        {/* 3D Canvas Background */}
+        <div className="hero-3d-canvas">
+          <Suspense fallback={null}>
+            <HeroScene />
+          </Suspense>
+        </div>
+
+        {/* Gradient overlays */}
+        <div className="hero-gradient-top" />
+        <div className="hero-gradient-bottom" />
+
+        {/* Content */}
+        <div className="container-custom hero-3d-content">
+          <div className="hero-3d-grid">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+              initial="hidden"
+              animate="visible"
+              variants={staggerContainer}
+              className="hero-text-block"
             >
-              <p className="text-primary-600 dark:text-primary-400 font-medium mb-4">
-                {t("hero.greeting")}
-              </p>
-              <h1 className="heading-1 mb-4">
-                <span className="text-gradient">{t("hero.name")}</span>
-              </h1>
-              <h2 className="text-2xl md:text-3xl font-semibold text-gray-700 dark:text-gray-300 mb-6">
+              <motion.div
+                variants={fadeUp}
+                custom={0}
+                className="hero-badge"
+              >
+                <span className="hero-badge-dot" />
+                <span>{t("hero.greeting")}</span>
+              </motion.div>
+
+              <motion.h1 variants={fadeUp} custom={1} className="hero-title">
+                <span className="hero-title-gradient">{t("hero.name")}</span>
+              </motion.h1>
+
+              <motion.h2 variants={fadeUp} custom={2} className="hero-subtitle">
                 {t("hero.title")}
-              </h2>
-              <p className="text-lg text-gray-600 dark:text-gray-400 mb-8 max-w-lg">
+              </motion.h2>
+
+              <motion.p variants={fadeUp} custom={3} className="hero-description">
                 {language === "id"
                   ? profile?.bio_id
                   : profile?.bio || t("hero.description")}
-              </p>
+              </motion.p>
 
-              <div className="flex flex-wrap gap-4 mb-8">
-                <Link to="/projects" className="btn-primary">
-                  {t("hero.cta")}
-                  <FiArrowRight className="ml-2" />
+              <motion.div
+                variants={fadeUp}
+                custom={4}
+                className="hero-actions"
+              >
+                <Link to="/projects" className="hero-btn-primary" id="cta-projects">
+                  <span>{t("hero.cta")}</span>
+                  <FiArrowRight className="hero-btn-icon" />
                 </Link>
-                <Link to="/contact" className="btn-outline">
-                  {t("hero.contact")}
+                <Link to="/contact" className="hero-btn-outline" id="cta-contact">
+                  <span>{t("hero.contact")}</span>
                 </Link>
-              </div>
+              </motion.div>
 
-              <div className="flex gap-4">
+              <motion.div
+                variants={fadeUp}
+                custom={5}
+                className="hero-socials"
+              >
                 {socialLinks.map(
                   (social) =>
                     social.href && (
@@ -125,160 +229,170 @@ export default function Home() {
                         href={social.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-3 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-primary-100 dark:hover:bg-primary-900/50 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200"
+                        className="hero-social-link"
                         aria-label={social.label}
                       >
                         <social.icon className="w-5 h-5" />
                       </a>
                     ),
                 )}
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative hidden lg:block"
-            >
-              <div className="relative w-80 h-80 mx-auto">
-                <div className="absolute inset-0 bg-gradient-to-tr from-primary-500 to-primary-700 rounded-full blur-3xl opacity-20 animate-pulse"></div>
-                <div className="relative w-full h-full rounded-full bg-gradient-to-tr from-primary-500 to-primary-700 flex items-center justify-center">
-                  <span className="text-8xl font-bold text-white">FM</span>
-                </div>
-              </div>
+              </motion.div>
             </motion.div>
           </div>
         </div>
+
+        {/* Scroll indicator */}
+        <motion.div
+          className="hero-scroll-indicator"
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <FiChevronDown className="w-6 h-6" />
+        </motion.div>
       </section>
 
-      {/* Skills Section */}
-      <section className="section bg-gray-50 dark:bg-gray-800/50">
+      {/* ═══════════════════════════════════════════ */}
+      {/* SKILLS SECTION WITH 3D CONSTELLATION       */}
+      {/* ═══════════════════════════════════════════ */}
+      <section className="skills-3d-section" id="skills-section">
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-12"
+            className="section-header"
           >
-            <h2 className="heading-2 mb-4">{t("about.skills")}</h2>
+            <span className="section-tag">Technologies</span>
+            <h2 className="section-title">{t("about.skills")}</h2>
+            <p className="section-description">
+              Interactive 3D skill constellation — hover to explore
+            </p>
           </motion.div>
 
-          <div className="flex flex-wrap justify-center gap-4">
+          {/* 3D Skills Constellation */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="skills-3d-container"
+          >
+            <Suspense fallback={<div className="skills-loading">Loading 3D...</div>}>
+              <SkillsScene />
+            </Suspense>
+          </motion.div>
+
+          {/* Skill Badges Fallback / Additional Display */}
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={staggerContainer}
+            className="skills-badge-grid"
+          >
             {skills.slice(0, 12).map((skill, index) => {
-              const skillIcons = {
-                React: { icon: SiReact, color: "#61DAFB" },
-                "Vue.js": { icon: SiVuedotjs, color: "#4FC08D" },
-                JavaScript: { icon: SiJavascript, color: "#F7DF1E" },
-                TypeScript: { icon: SiTypescript, color: "#3178C6" },
-                HTML5: { icon: SiHtml5, color: "#E34F26" },
-                CSS3: { icon: SiCss3, color: "#1572B6" },
-                "Tailwind CSS": { icon: SiTailwindcss, color: "#06B6D4" },
-                "Next.js": { icon: SiNextdotjs, color: "#000000" },
-                "Node.js": { icon: SiNodedotjs, color: "#339933" },
-                "Express.js": { icon: SiExpress, color: "#000000" },
-                PostgreSQL: { icon: SiPostgresql, color: "#4169E1" },
-                MongoDB: { icon: SiMongodb, color: "#47A248" },
-                Python: { icon: SiPython, color: "#3776AB" },
-                "REST API": { icon: TbApi, color: "#6366F1" },
-                Git: { icon: SiGit, color: "#F05032" },
-                Docker: { icon: SiDocker, color: "#2496ED" },
-                "VS Code": { icon: SiVisualstudiocode, color: "#007ACC" },
-                Figma: { icon: SiFigma, color: "#F24E1E" },
-                Vercel: { icon: SiVercel, color: "#000000" },
-                GitHub: { icon: SiGithub, color: "#181717" },
-              };
               const skillData = skillIcons[skill.name];
               const IconComponent = skillData?.icon;
 
               return (
                 <motion.div
                   key={skill.id}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.05 }}
-                  className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-200"
+                  variants={fadeUp}
+                  custom={index}
+                  className="skill-badge-3d"
+                  style={{
+                    "--skill-color": skillData?.color || "#6366f1",
+                  }}
                 >
                   {IconComponent && (
                     <IconComponent
-                      className="w-5 h-5"
+                      className="skill-badge-icon"
                       style={{ color: skillData.color }}
                     />
                   )}
-                  <span className="font-medium text-gray-800 dark:text-gray-200">
-                    {skill.name}
-                  </span>
+                  <span className="skill-badge-name">{skill.name}</span>
+                  <span className="skill-badge-level">{skill.proficiency}%</span>
                 </motion.div>
               );
             })}
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* Featured Projects */}
-      <section className="section">
-        <div className="container-custom">
+      {/* ═══════════════════════════════════════════ */}
+      {/* FEATURED PROJECTS WITH 3D BACKGROUND       */}
+      {/* ═══════════════════════════════════════════ */}
+      <section className="projects-3d-section" id="projects-section">
+        {/* 3D Background */}
+        <div className="projects-3d-bg">
+          <Suspense fallback={null}>
+            <ProjectsScene />
+          </Suspense>
+        </div>
+
+        <div className="container-custom projects-3d-content">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-12"
+            className="section-header"
           >
-            <h2 className="heading-2 mb-4">{t("projects.featured")}</h2>
+            <span className="section-tag">Portfolio</span>
+            <h2 className="section-title">{t("projects.featured")}</h2>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="projects-3d-grid">
             {projects.map((project, index) => (
               <motion.article
                 key={project.id}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="card overflow-hidden group"
+                transition={{ delay: index * 0.15, duration: 0.6 }}
+                className="project-card-3d"
               >
-                <div className="h-48 bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center overflow-hidden">
+                <div className="project-card-image">
                   {project.thumbnail ? (
                     <img
                       src={project.thumbnail}
                       alt={project.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="project-card-img"
                     />
                   ) : (
-                    <span className="text-4xl font-bold text-white opacity-50">
-                      {project.title.charAt(0)}
-                    </span>
+                    <div className="project-card-placeholder">
+                      <span>{project.title.charAt(0)}</span>
+                    </div>
                   )}
+                  <div className="project-card-overlay" />
                 </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+
+                <div className="project-card-body">
+                  <h3 className="project-card-title">
                     {language === "id"
                       ? project.title_id || project.title
                       : project.title}
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">
+                  <p className="project-card-desc">
                     {language === "id"
                       ? project.description_id || project.description
                       : project.description}
                   </p>
-                  <div className="flex flex-wrap gap-2 mb-4">
+
+                  <div className="project-card-tech">
                     {project.tech_stack?.slice(0, 4).map((tech) => (
-                      <span
-                        key={tech}
-                        className="px-2 py-1 text-xs font-medium bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded"
-                      >
+                      <span key={tech} className="project-tech-tag">
                         {tech}
                       </span>
                     ))}
                   </div>
-                  <div className="flex gap-3">
+
+                  <div className="project-card-links">
                     {project.demo_url && (
                       <a
                         href={project.demo_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-1 text-sm text-primary-600 dark:text-primary-400 hover:underline"
+                        className="project-link"
                       >
                         <FiExternalLink className="w-4 h-4" />
                         {t("projects.liveDemo")}
@@ -286,38 +400,42 @@ export default function Home() {
                     )}
                   </div>
                 </div>
+
+                {/* Glass border effect */}
+                <div className="project-card-glow" />
               </motion.article>
             ))}
           </div>
 
-          <div className="text-center mt-12">
-            <Link to="/projects" className="btn-primary">
-              {t("projects.viewAll")}
-              <FiArrowRight className="ml-2" />
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="projects-cta"
+          >
+            <Link to="/projects" className="hero-btn-primary">
+              <span>{t("projects.viewAll")}</span>
+              <FiArrowRight className="hero-btn-icon" />
             </Link>
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="section bg-gradient-to-r from-primary-600 to-primary-800">
-        <div className="container-custom text-center">
+      {/* ═══════════════════════════════════════════ */}
+      {/* CTA SECTION                                */}
+      {/* ═══════════════════════════════════════════ */}
+      <section className="cta-3d-section">
+        <div className="cta-bg-pattern" />
+        <div className="container-custom cta-content">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="heading-2 text-white mb-4">
-              {t("contact.subtitle")}
-            </h2>
-            <p className="text-primary-100 mb-8 max-w-2xl mx-auto">
-              {t("hero.description")}
-            </p>
-            <Link
-              to="/contact"
-              className="inline-flex items-center px-8 py-4 bg-white text-primary-600 font-semibold rounded-lg hover:bg-primary-50 transition-colors"
-            >
-              {t("hero.contact")}
+            <h2 className="cta-title">{t("contact.subtitle")}</h2>
+            <p className="cta-description">{t("hero.description")}</p>
+            <Link to="/contact" className="cta-button" id="cta-contact-bottom">
+              <span>{t("hero.contact")}</span>
               <FiArrowRight className="ml-2" />
             </Link>
           </motion.div>

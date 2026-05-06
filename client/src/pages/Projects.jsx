@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense, lazy } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
@@ -7,7 +7,8 @@ import { FiExternalLink, FiGithub, FiFilter } from "react-icons/fi";
 import { projectsApi } from "../services/api";
 import { useLanguage } from "../contexts/LanguageContext";
 import LoadingSpinner from "../components/UI/LoadingSpinner";
-import { mergeFeaturedProjects } from "../data/projects";
+
+const ProjectsScene = lazy(() => import("../components/three/ProjectsScene"));
 
 export default function Projects() {
   const { t } = useTranslation();
@@ -22,14 +23,12 @@ export default function Projects() {
     const fetchProjects = async () => {
       try {
         const response = await projectsApi.getAll();
-        const mergedProjects = mergeFeaturedProjects(response.data);
-        setProjects(mergedProjects);
-        setFilteredProjects(mergedProjects);
+        const data = Array.isArray(response.data) ? response.data : [];
+        setProjects(data);
+        setFilteredProjects(data);
 
         // Extract unique categories
-        const cats = [
-          ...new Set(mergedProjects.map((p) => p.category).filter(Boolean)),
-        ];
+        const cats = [...new Set(data.map((p) => p.category).filter(Boolean))];
         setCategories(cats);
       } catch (error) {
         console.error("Failed to fetch projects:", error);
@@ -60,17 +59,30 @@ export default function Projects() {
         <title>{t("projects.title")} - Filbert Matthew</title>
       </Helmet>
 
-      <section className="section pt-24 md:pt-32">
-        <div className="container-custom">
+      <section className="projects-3d-section min-h-screen relative overflow-hidden">
+        {/* 3D Background */}
+        <div className="projects-3d-bg pointer-events-none">
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a1a] via-[#13111c] to-[#0a0a1a] pointer-events-none z-0"></div>
+          <div className="absolute top-1/4 right-0 w-[500px] h-[500px] bg-primary-600/10 rounded-full blur-[100px] pointer-events-none z-0"></div>
+          <div className="absolute bottom-1/4 left-0 w-[500px] h-[500px] bg-violet-600/10 rounded-full blur-[100px] pointer-events-none z-0"></div>
+
+          {/* 3D Scene (Background) */}
+          <div className="absolute inset-0 z-10">
+            <Suspense fallback={null}>
+              <ProjectsScene />
+            </Suspense>
+          </div>
+        </div>
+
+        <div className="container-custom relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-12"
+            className="section-header"
           >
-            <h1 className="heading-1 mb-4">{t("projects.title")}</h1>
-            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              {t("projects.subtitle")}
-            </p>
+            <span className="section-tag">Portfolio</span>
+            <h2 className="section-title">{t("projects.title")}</h2>
+            <p className="section-description">{t("projects.subtitle")}</p>
           </motion.div>
 
           {/* Category Filter */}
@@ -83,10 +95,10 @@ export default function Projects() {
             >
               <button
                 onClick={() => setActiveCategory("all")}
-                className={`px-5 py-2 rounded-full font-medium transition-all duration-200 ${
+                className={`px-5 py-2 rounded-full font-medium transition-all duration-300 backdrop-blur-md ${
                   activeCategory === "all"
-                    ? "bg-primary-600 text-white shadow-lg"
-                    : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                    ? "bg-primary-600/80 text-white shadow-[0_0_15px_rgba(99,102,241,0.5)] border border-primary-500/50"
+                    : "bg-white/5 text-gray-300 hover:bg-white/10 border border-white/10"
                 }`}
               >
                 {t("projects.all")}
@@ -95,10 +107,10 @@ export default function Projects() {
                 <button
                   key={category}
                   onClick={() => setActiveCategory(category)}
-                  className={`px-5 py-2 rounded-full font-medium transition-all duration-200 ${
+                  className={`px-5 py-2 rounded-full font-medium transition-all duration-300 backdrop-blur-md ${
                     activeCategory === category
-                      ? "bg-primary-600 text-white shadow-lg"
-                      : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                      ? "bg-primary-600/80 text-white shadow-[0_0_15px_rgba(99,102,241,0.5)] border border-primary-500/50"
+                      : "bg-white/5 text-gray-300 hover:bg-white/10 border border-white/10"
                   }`}
                 >
                   {category}
@@ -110,92 +122,90 @@ export default function Projects() {
           {/* Projects Grid */}
           {filteredProjects.length === 0 ? (
             <div className="text-center py-16">
-              <FiFilter className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-              <p className="text-xl text-gray-600 dark:text-gray-400">
+              <FiFilter className="w-16 h-16 mx-auto text-gray-500 mb-4" />
+              <p className="text-xl text-gray-400">
                 {t("projects.noProjects")}
               </p>
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="projects-3d-grid">
               {filteredProjects.map((project, index) => (
                 <motion.article
                   key={project.id}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  layout
-                  className="card overflow-hidden group"
+                  transition={{ delay: index * 0.15, duration: 0.6 }}
+                  className="project-card-3d"
                 >
-                  <div className="relative h-52 bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center overflow-hidden">
+                  <div className="project-card-image">
                     {project.thumbnail ? (
                       <img
                         src={project.thumbnail}
                         alt={project.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="project-card-img"
                       />
                     ) : (
-                      <span className="text-6xl font-bold text-white opacity-30">
-                        {project.title.charAt(0)}
-                      </span>
+                      <div className="project-card-placeholder">
+                        <span>{project.title.charAt(0)}</span>
+                      </div>
                     )}
+                    <div className="project-card-overlay" />
 
                     {project.featured && (
-                      <span className="absolute top-4 right-4 px-3 py-1 bg-yellow-500 text-white text-xs font-semibold rounded-full">
+                      <span className="absolute top-4 right-4 px-3 py-1 bg-yellow-500/90 backdrop-blur-sm text-white text-xs font-semibold rounded-full shadow-[0_0_10px_rgba(234,179,8,0.5)]">
                         Featured
                       </span>
                     )}
                   </div>
 
-                  <div className="p-6">
-                    <div className="flex items-start justify-between gap-2 mb-2">
-                      <h3 className="text-xl font-semibold group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                        {language === "id"
-                          ? project.title_id || project.title
-                          : project.title}
-                      </h3>
-                      {project.category && (
-                        <span className="flex-shrink-0 px-2 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded">
-                          {project.category}
-                        </span>
-                      )}
-                    </div>
-
-                    <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
+                  <div className="project-card-body">
+                    <h3 className="project-card-title">
+                      {language === "id"
+                        ? project.title_id || project.title
+                        : project.title}
+                    </h3>
+                    <p className="project-card-desc">
                       {language === "id"
                         ? project.description_id || project.description
                         : project.description}
                     </p>
 
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {project.tech_stack?.slice(0, 5).map((tech) => (
-                        <span
-                          key={tech}
-                          className="px-2 py-1 text-xs font-medium bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded"
-                        >
+                    <div className="project-card-tech">
+                      {project.tech_stack?.slice(0, 4).map((tech) => (
+                        <span key={tech} className="project-tech-tag">
                           {tech}
                         </span>
                       ))}
-                      {project.tech_stack?.length > 5 && (
-                        <span className="px-2 py-1 text-xs text-gray-500 dark:text-gray-400">
-                          +{project.tech_stack.length - 5}
-                        </span>
-                      )}
                     </div>
 
-                    <div className="flex gap-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+                    <div className="project-card-links">
                       {project.demo_url && (
                         <a
                           href={project.demo_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-2 text-sm font-medium text-primary-600 dark:text-primary-400 hover:underline"
+                          className="project-link"
                         >
                           <FiExternalLink className="w-4 h-4" />
                           {t("projects.liveDemo")}
                         </a>
                       )}
+                      {project.github_url && (
+                        <a
+                          href={project.github_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="project-link project-link-github"
+                        >
+                          <FiGithub className="w-4 h-4" />
+                          GitHub
+                        </a>
+                      )}
                     </div>
                   </div>
+
+                  {/* Glass border effect */}
+                  <div className="project-card-glow" />
                 </motion.article>
               ))}
             </div>

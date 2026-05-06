@@ -35,9 +35,27 @@ Thumbs.db
 # Test coverage
 coverage
 
+# Playwright / test artifacts
+test-results
+playwright-report
+
 # Vercel
 .vercel
+
+# Vite cache
+.vite
 
 # Uploaded files
 uploads/*
 !uploads/.gitkeep
+
+# Local utility scripts (contain secrets / machine-specific)
+check-db.js
+client/get_console_logs.js
+api/delete-projects.js
+api/fix-schema.js
+api/insert-projects.js
+api/update-github.js
+
+# Accidental nested npm folder
+api/api/

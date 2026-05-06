@@ -106,6 +106,22 @@ const seed = async () => {
     // Add sample projects
     const projects = [
       {
+        title: "Kopi Nusantara Brew",
+        title_id: "Kopi Nusantara Brew",
+        slug: "kopi-nusantara-brew",
+        description: "Website coffee shop premium dengan pengalaman kopi autentik Nusantara. Menampilkan menu, sistem pemesanan, dan desain elegan dengan tema kopi.",
+        description_id: "Website coffee shop premium dengan pengalaman kopi autentik Nusantara. Menampilkan menu, sistem pemesanan, dan desain elegan dengan tema kopi.",
+        content: "Kopi Nusantara Brew adalah website untuk coffee shop yang menawarkan pengalaman kopi premium dengan cita rasa autentik Nusantara. Website ini memiliki fitur menu interaktif, keranjang belanja, mode gelap/terang, dan desain responsif yang menawan.",
+        content_id: "Kopi Nusantara Brew adalah website untuk coffee shop yang menawarkan pengalaman kopi premium dengan cita rasa autentik Nusantara. Website ini memiliki fitur menu interaktif, keranjang belanja, mode gelap/terang, dan desain responsif yang menawan.",
+        thumbnail: "https://api.microlink.io/?url=https://website-portofolio-ivory-mu.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
+        demo_url: "https://website-portofolio-ivory-mu.vercel.app/",
+        github_url: "https://website-portofolio-ivory-mu.vercel.app/",
+        tech_stack: ["React", "Tailwind CSS", "Framer Motion", "Vite"],
+        category: "Web App",
+        featured: true,
+        is_published: true,
+      },
+      {
         title: "Financial Manage Dwivan",
         title_id: "Financial Manage Dwivan",
         slug: "financial-manage-dwivan",
@@ -113,7 +129,12 @@ const seed = async () => {
           "A smart financial planning app for tracking expenses, calculating remaining budget, and getting personalized investment recommendations.",
         description_id:
           "Aplikasi smart financial planning untuk melacak pengeluaran, menghitung sisa anggaran, dan mendapatkan rekomendasi investasi yang dipersonalisasi.",
-        technologies: [
+        content: "Financial Manage Dwivan is a comprehensive financial management application designed to help users track their expenses, manage budgets, and receive personalized investment recommendations. Built with modern web technologies for a seamless user experience.",
+        content_id: "Financial Manage Dwivan adalah aplikasi manajemen keuangan komprehensif yang dirancang untuk membantu pengguna melacak pengeluaran, mengelola anggaran, dan mendapatkan rekomendasi investasi yang dipersonalisasi. Dibangun dengan teknologi web modern untuk pengalaman pengguna yang seamless.",
+        thumbnail: "https://api.microlink.io/?url=https://financial-manage-dwivan.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
+        demo_url: "https://financial-manage-dwivan.vercel.app",
+        github_url: "https://github.com/HotIce3/financial-manage-dwivan",
+        tech_stack: [
           "React",
           "Vite",
           "Tailwind CSS",
@@ -122,6 +143,7 @@ const seed = async () => {
         ],
         category: "Finance",
         featured: true,
+        is_published: true,
       },
       {
         title: "E-Commerce Platform",
@@ -131,7 +153,12 @@ const seed = async () => {
           "A full-featured e-commerce platform with product management, shopping cart, payment integration, and admin dashboard.",
         description_id:
           "Platform e-commerce lengkap dengan manajemen produk, keranjang belanja, integrasi pembayaran, dan dashboard admin.",
-        technologies: [
+        content: "A comprehensive e-commerce solution built with modern technologies, featuring product catalog management, shopping cart functionality, secure payment processing, and an intuitive admin dashboard for inventory management.",
+        content_id: "Solusi e-commerce komprehensif yang dibangun dengan teknologi modern, menampilkan manajemen katalog produk, fungsionalitas keranjang belanja, pemrosesan pembayaran yang aman, dan dashboard admin yang intuitif untuk manajemen inventaris.",
+        thumbnail: "https://api.microlink.io/?url=https://ecommerce-demo.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
+        demo_url: "https://ecommerce-demo.vercel.app",
+        github_url: "https://github.com/HotIce3/ecommerce-platform",
+        tech_stack: [
           "React",
           "Node.js",
           "PostgreSQL",
@@ -140,6 +167,7 @@ const seed = async () => {
         ],
         category: "Full Stack",
         featured: true,
+        is_published: true,
       },
       {
         title: "Task Management App",
@@ -149,21 +177,15 @@ const seed = async () => {
           "A collaborative task management application with real-time updates, team features, and progress tracking.",
         description_id:
           "Aplikasi manajemen tugas kolaboratif dengan update real-time, fitur tim, dan pelacakan progres.",
-        technologies: ["Next.js", "TypeScript", "MongoDB", "Socket.io"],
+        content: "A powerful task management application designed for teams, featuring real-time collaboration, task assignment, progress tracking, and comprehensive project management tools.",
+        content_id: "Aplikasi manajemen tugas yang powerful yang dirancang untuk tim, menampilkan kolaborasi real-time, penugasan tugas, pelacakan progres, dan alat manajemen proyek yang komprehensif.",
+        thumbnail: "https://api.microlink.io/?url=https://task-app-demo.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
+        demo_url: "https://task-app-demo.vercel.app",
+        github_url: "https://github.com/HotIce3/task-management-app",
+        tech_stack: ["Next.js", "TypeScript", "MongoDB", "Socket.io"],
         category: "Web App",
         featured: true,
-      },
-      {
-        title: "Portfolio Website",
-        title_id: "Website Portfolio",
-        slug: "portfolio-website",
-        description:
-          "Personal portfolio website showcasing projects and skills with modern design and smooth animations.",
-        description_id:
-          "Website portfolio personal yang menampilkan proyek dan skill dengan desain modern dan animasi halus.",
-        technologies: ["React", "Vite", "Tailwind CSS", "Framer Motion"],
-        category: "Frontend",
-        featured: true,
+        is_published: true,
       },
     ];
 
@@ -171,8 +193,8 @@ const seed = async () => {
       const p = projects[i];
       await client.query(
         `
-        INSERT INTO projects (title, title_id, slug, description, description_id, technologies, category, featured, sort_order)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        INSERT INTO projects (title, title_id, slug, description, description_id, content, content_id, thumbnail, demo_url, github_url, tech_stack, category, featured, is_published, sort_order)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
       `,
         [
           p.title,
@@ -180,9 +202,15 @@ const seed = async () => {
           p.slug,
           p.description,
           p.description_id,
-          p.technologies,
+          p.content,
+          p.content_id,
+          p.thumbnail,
+          p.demo_url,
+          p.github_url,
+          p.tech_stack,
           p.category,
           p.featured,
+          p.is_published,
           i,
         ],
       );

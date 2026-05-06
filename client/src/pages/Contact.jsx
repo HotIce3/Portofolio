@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense, lazy } from "react";
 import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
@@ -13,6 +13,8 @@ import {
 } from "react-icons/fi";
 import toast from "react-hot-toast";
 import { contactApi, profileApi } from "../services/api";
+
+const ProjectsScene = lazy(() => import("../components/three/ProjectsScene"));
 
 export default function Contact() {
   const { t } = useTranslation();
@@ -65,18 +67,29 @@ export default function Contact() {
         <title>{t("contact.title")} - Filbert Matthew</title>
       </Helmet>
 
-      <section className="section pt-24 md:pt-32">
-        <div className="container-custom">
+      <section className="cta-3d-section min-h-screen relative overflow-hidden">
+        <div className="cta-bg-pattern" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a1a] via-[#13111c] to-[#0a0a1a] pointer-events-none z-0"></div>
+        <div className="absolute top-[20%] left-[10%] w-[400px] h-[400px] bg-primary-600/10 rounded-full blur-[100px] pointer-events-none z-0"></div>
+        <div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] bg-violet-600/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
+
+        {/* 3D Scene (Background) */}
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-40">
+          <Suspense fallback={null}>
+            <ProjectsScene />
+          </Suspense>
+        </div>
+
+        <div className="container-custom relative z-10">
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-16"
+            className="section-header"
           >
-            <h1 className="heading-1 mb-4">{t("contact.title")}</h1>
-            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              {t("contact.subtitle")}
-            </p>
+            <span className="section-tag">{t("nav.contact")}</span>
+            <h2 className="section-title">{t("contact.title")}</h2>
+            <p className="section-description">{t("contact.subtitle")}</p>
           </motion.div>
 
           <div className="grid lg:grid-cols-5 gap-12 max-w-6xl mx-auto">
@@ -87,23 +100,21 @@ export default function Contact() {
               transition={{ delay: 0.1 }}
               className="lg:col-span-2"
             >
-              <div className="card p-8 sticky top-24">
-                <h2 className="text-xl font-semibold mb-6">
+              <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 sticky top-24 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+                <h2 className="text-xl font-semibold mb-6 text-white">
                   {t("contact.info")}
                 </h2>
 
                 <div className="space-y-6">
                   <div className="flex items-start gap-4">
-                    <div className="p-3 bg-primary-100 dark:bg-primary-900/30 rounded-lg">
-                      <FiMail className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+                    <div className="p-3 bg-white/10 rounded-lg backdrop-blur-sm border border-white/5 shadow-[0_0_15px_rgba(99,102,241,0.2)]">
+                      <FiMail className="w-5 h-5 text-primary-400" />
                     </div>
                     <div>
-                      <h3 className="font-medium text-gray-900 dark:text-white">
-                        Email
-                      </h3>
+                      <h3 className="font-medium text-gray-300">Email</h3>
                       <a
                         href={`mailto:${profile?.email || "filbertmathew63@gmail.com"}`}
-                        className="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
+                        className="text-gray-400 hover:text-primary-400 transition-colors"
                       >
                         {profile?.email || "filbertmathew63@gmail.com"}
                       </a>
@@ -112,16 +123,14 @@ export default function Contact() {
 
                   {profile?.phone && (
                     <div className="flex items-start gap-4">
-                      <div className="p-3 bg-primary-100 dark:bg-primary-900/30 rounded-lg">
-                        <FiPhone className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+                      <div className="p-3 bg-white/10 rounded-lg backdrop-blur-sm border border-white/5 shadow-[0_0_15px_rgba(99,102,241,0.2)]">
+                        <FiPhone className="w-5 h-5 text-primary-400" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-gray-900 dark:text-white">
-                          Phone
-                        </h3>
+                        <h3 className="font-medium text-gray-300">Phone</h3>
                         <a
                           href={`tel:${profile.phone}`}
-                          className="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
+                          className="text-gray-400 hover:text-primary-400 transition-colors"
                         >
                           {profile.phone}
                         </a>
@@ -131,16 +140,14 @@ export default function Contact() {
 
                   {profile?.location && (
                     <div className="flex items-start gap-4">
-                      <div className="p-3 bg-primary-100 dark:bg-primary-900/30 rounded-lg">
-                        <FiMapPin className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+                      <div className="p-3 bg-white/10 rounded-lg backdrop-blur-sm border border-white/5 shadow-[0_0_15px_rgba(99,102,241,0.2)]">
+                        <FiMapPin className="w-5 h-5 text-primary-400" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-gray-900 dark:text-white">
+                        <h3 className="font-medium text-gray-300">
                           {t("contact.location")}
                         </h3>
-                        <p className="text-gray-600 dark:text-gray-400">
-                          {profile.location}
-                        </p>
+                        <p className="text-gray-400">{profile.location}</p>
                       </div>
                     </div>
                   )}
@@ -148,8 +155,8 @@ export default function Contact() {
 
                 {/* Social Links */}
                 {socialLinks.length > 0 && (
-                  <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
-                    <h3 className="font-medium text-gray-900 dark:text-white mb-4">
+                  <div className="mt-8 pt-8 border-t border-white/10">
+                    <h3 className="font-medium text-gray-300 mb-4">
                       {t("contact.followMe")}
                     </h3>
                     <div className="flex gap-3">
@@ -159,7 +166,7 @@ export default function Contact() {
                           href={social.href}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-3 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-primary-100 dark:hover:bg-primary-900/50 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                          className="p-3 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 hover:border-primary-500/50 hover:text-primary-400 transition-all duration-300 shadow-[0_4px_10px_rgba(0,0,0,0.2)] hover:shadow-[0_0_15px_rgba(99,102,241,0.4)]"
                           aria-label={social.label}
                         >
                           <social.icon className="w-5 h-5" />
@@ -178,10 +185,16 @@ export default function Contact() {
               transition={{ delay: 0.2 }}
               className="lg:col-span-3"
             >
-              <form onSubmit={handleSubmit} className="card p-8">
+              <form
+                onSubmit={handleSubmit}
+                className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-[0_0_20px_rgba(0,0,0,0.5)]"
+              >
                 <div className="grid md:grid-cols-2 gap-6 mb-6">
                   <div>
-                    <label htmlFor="name" className="label">
+                    <label
+                      htmlFor="name"
+                      className="block text-sm font-medium text-gray-300 mb-2"
+                    >
                       {t("contact.name")}
                     </label>
                     <input
@@ -191,12 +204,15 @@ export default function Contact() {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className="input"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300 text-white placeholder-gray-500 hover:bg-white/10"
                       placeholder="John Doe"
                     />
                   </div>
                   <div>
-                    <label htmlFor="email" className="label">
+                    <label
+                      htmlFor="email"
+                      className="block text-sm font-medium text-gray-300 mb-2"
+                    >
                       {t("contact.email")}
                     </label>
                     <input
@@ -206,14 +222,17 @@ export default function Contact() {
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="input"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300 text-white placeholder-gray-500 hover:bg-white/10"
                       placeholder="john@example.com"
                     />
                   </div>
                 </div>
 
                 <div className="mb-6">
-                  <label htmlFor="subject" className="label">
+                  <label
+                    htmlFor="subject"
+                    className="block text-sm font-medium text-gray-300 mb-2"
+                  >
                     {t("contact.subject")}
                   </label>
                   <input
@@ -222,13 +241,16 @@ export default function Contact() {
                     name="subject"
                     value={formData.subject}
                     onChange={handleChange}
-                    className="input"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300 text-white placeholder-gray-500 hover:bg-white/10"
                     placeholder="Project Inquiry"
                   />
                 </div>
 
                 <div className="mb-6">
-                  <label htmlFor="message" className="label">
+                  <label
+                    htmlFor="message"
+                    className="block text-sm font-medium text-gray-300 mb-2"
+                  >
                     {t("contact.message")}
                   </label>
                   <textarea
@@ -238,7 +260,7 @@ export default function Contact() {
                     onChange={handleChange}
                     required
                     rows={6}
-                    className="input resize-none"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300 text-white placeholder-gray-500 hover:bg-white/10 resize-none"
                     placeholder="Tell me about your project..."
                   />
                 </div>
@@ -246,16 +268,16 @@ export default function Contact() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="btn-primary w-full"
+                  className="w-full flex justify-center items-center gap-2 py-3 px-6 bg-gradient-to-r from-primary-600 to-violet-600 hover:from-primary-500 hover:to-violet-500 text-white font-semibold rounded-xl shadow-[0_0_20px_rgba(99,102,241,0.4)] hover:shadow-[0_0_30px_rgba(139,92,246,0.6)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <>
-                      <span className="animate-spin mr-2">⏳</span>
+                      <span className="animate-spin text-xl">⏳</span>
                       {t("contact.sending")}
                     </>
                   ) : (
                     <>
-                      <FiSend className="mr-2" />
+                      <FiSend className="w-5 h-5" />
                       {t("contact.send")}
                     </>
                   )}

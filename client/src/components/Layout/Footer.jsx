@@ -1,10 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FiGithub, FiLinkedin, FiMail, FiHeart } from "react-icons/fi";
 
 export default function Footer() {
   const { t } = useTranslation();
+  const location = useLocation();
   const currentYear = new Date().getFullYear();
+  const isHomePage = location.pathname === "/";
 
   const socialLinks = [
     {
@@ -21,85 +23,130 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
-      <div className="container-custom py-12">
-        <div className="grid md:grid-cols-3 gap-8">
-          {/* Brand */}
-          <div>
-            <Link to="/" className="text-2xl font-bold text-gradient">
-              Filbert.dev
-            </Link>
-            <p className="mt-4 text-gray-600 dark:text-gray-400">
-              Full Stack Web Developer
-            </p>
-          </div>
+      <footer
+        style={{
+          background: "linear-gradient(180deg, #0a0a1a 0%, #050510 100%)",
+          borderTop: "1px solid rgba(99, 102, 241, 0.08)",
+        }}
+      >
+        <div className="container-custom py-12">
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Brand */}
+            <div>
+              <Link
+                to="/"
+                className="text-2xl font-bold"
+                style={{
+                  background: "linear-gradient(135deg, #a78bfa, #6366f1)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}
+              >
+                Filbert.dev
+              </Link>
+              <p className="mt-4" style={{ color: "rgba(148, 163, 184, 0.7)" }}>
+                Full Stack Web Developer
+              </p>
+            </div>
 
-          {/* Quick Links */}
-          <div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
-              Quick Links
-            </h3>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  to="/projects"
-                  className="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
-                >
-                  {t("nav.projects")}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/about"
-                  className="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
-                >
-                  {t("nav.about")}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/contact"
-                  className="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
-                >
-                  {t("nav.contact")}
-                </Link>
-              </li>
-            </ul>
-          </div>
+            {/* Quick Links */}
+            <div>
+              <h3
+                className="font-semibold mb-4"
+                style={{ color: "#e2e8f0" }}
+              >
+                Quick Links
+              </h3>
+              <ul className="space-y-2">
+                {[
+                  { to: "/projects", label: t("nav.projects") },
+                  { to: "/about", label: t("nav.about") },
+                  { to: "/contact", label: t("nav.contact") },
+                ].map((link) => (
+                  <li key={link.to}>
+                    <Link
+                      to={link.to}
+                      className="transition-colors"
+                      style={{ color: "rgba(148, 163, 184, 0.6)" }}
+                      onMouseEnter={(e) =>
+                        (e.target.style.color = "#a78bfa")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.target.style.color = "rgba(148, 163, 184, 0.6)")
+                      }
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* Social Links */}
-          <div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
-              {t("contact.followMe")}
-            </h3>
-            <div className="flex gap-4">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2 rounded-lg bg-gray-200 dark:bg-gray-800 hover:bg-primary-100 dark:hover:bg-primary-900/50 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
-                  aria-label={social.label}
-                >
-                  <social.icon className="w-5 h-5" />
-                </a>
-              ))}
+            {/* Social Links */}
+            <div>
+              <h3
+                className="font-semibold mb-4"
+                style={{ color: "#e2e8f0" }}
+              >
+                {t("contact.followMe")}
+              </h3>
+              <div className="flex gap-4">
+                {socialLinks.map((social) => (
+                  <a
+                    key={social.label}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 rounded-lg transition-all duration-300"
+                    style={{
+                      background: "rgba(255, 255, 255, 0.05)",
+                      border: "1px solid rgba(255, 255, 255, 0.08)",
+                      color: "rgba(148, 163, 184, 0.6)",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background =
+                        "rgba(99, 102, 241, 0.15)";
+                      e.currentTarget.style.borderColor =
+                        "rgba(99, 102, 241, 0.3)";
+                      e.currentTarget.style.color = "#a78bfa";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background =
+                        "rgba(255, 255, 255, 0.05)";
+                      e.currentTarget.style.borderColor =
+                        "rgba(255, 255, 255, 0.08)";
+                      e.currentTarget.style.color =
+                        "rgba(148, 163, 184, 0.6)";
+                    }}
+                    aria-label={social.label}
+                  >
+                    <social.icon className="w-5 h-5" />
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Copyright */}
-        <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800 text-center">
-          <p className="text-gray-600 dark:text-gray-400">
-            © {currentYear} Filbert Matthew. {t("footer.rights")}.
-          </p>
-          <p className="mt-2 text-sm text-gray-500 dark:text-gray-500 flex items-center justify-center gap-1">
-            {t("footer.madeWith")} <FiHeart className="text-red-500" />{" "}
-            {t("footer.by")} Filbert Matthew
-          </p>
+          {/* Copyright */}
+          <div
+            className="mt-12 pt-8 text-center"
+            style={{
+              borderTop: "1px solid rgba(99, 102, 241, 0.08)",
+            }}
+          >
+            <p style={{ color: "rgba(148, 163, 184, 0.5)" }}>
+              © {currentYear} Filbert Matthew. {t("footer.rights")}.
+            </p>
+            <p
+              className="mt-2 text-sm flex items-center justify-center gap-1"
+              style={{ color: "rgba(148, 163, 184, 0.4)" }}
+            >
+              {t("footer.madeWith")}{" "}
+              <FiHeart style={{ color: "#f472b6" }} /> {t("footer.by")}{" "}
+              Filbert Matthew
+            </p>
+          </div>
         </div>
-      </div>
     </footer>
   );
 }

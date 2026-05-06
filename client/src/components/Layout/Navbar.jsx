@@ -2,13 +2,11 @@ import { useState, useEffect } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiMenu, FiX, FiSun, FiMoon, FiGlobe } from "react-icons/fi";
-import { useTheme } from "../../contexts/ThemeContext";
+import { FiMenu, FiX, FiGlobe } from "react-icons/fi";
 import { useLanguage } from "../../contexts/LanguageContext";
 
 export default function Navbar() {
   const { t } = useTranslation();
-  const { darkMode, toggleDarkMode } = useTheme();
   const { language, toggleLanguage, currentLanguage } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -35,17 +33,30 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-lg"
-          : "bg-transparent"
+          ? "navbar-3d-scrolled"
+          : "navbar-3d-transparent"
       }`}
+      style={{
+        background: scrolled ? "rgba(10, 10, 26, 0.85)" : "transparent",
+        backdropFilter: scrolled ? "blur(20px)" : "none",
+        borderBottom: scrolled ? "1px solid rgba(99, 102, 241, 0.1)" : "none",
+      }}
     >
       <nav className="container-custom">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link to="/" className="text-xl md:text-2xl font-bold text-gradient">
-            Filbert.dev
+          <Link
+            to="/"
+            className="text-xl md:text-2xl font-bold"
+            style={{
+              background: "linear-gradient(135deg, #a78bfa, #6366f1)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}
+          >
+            <span>Filbert.dev</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -56,10 +67,10 @@ export default function Navbar() {
                   <NavLink
                     to={link.path}
                     className={({ isActive }) =>
-                      `relative font-medium transition-colors duration-200 hover:text-primary-600 dark:hover:text-primary-400 ${
+                      `relative font-medium transition-colors duration-200 ${
                         isActive
-                          ? "text-primary-600 dark:text-primary-400"
-                          : "text-gray-700 dark:text-gray-300"
+                          ? "text-violet-400"
+                          : "text-gray-300 hover:text-violet-300"
                       }`
                     }
                   >
@@ -68,7 +79,7 @@ export default function Navbar() {
                         {link.label}
                         {isActive && (
                           <motion.div
-                            className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary-600 dark:bg-primary-400"
+                            className="absolute -bottom-1 left-0 right-0 h-0.5 bg-violet-400"
                             layoutId="navbar-indicator"
                           />
                         )}
@@ -83,22 +94,10 @@ export default function Navbar() {
             <div className="flex items-center gap-2">
               <button
                 onClick={toggleLanguage}
-                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                className="p-2 rounded-lg transition-colors hover:bg-white/10"
                 title={t("language.toggle")}
               >
                 <span className="text-lg">{currentLanguage.flag}</span>
-              </button>
-
-              <button
-                onClick={toggleDarkMode}
-                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                title={t("theme.toggle")}
-              >
-                {darkMode ? (
-                  <FiSun className="w-5 h-5 text-yellow-500" />
-                ) : (
-                  <FiMoon className="w-5 h-5 text-gray-700" />
-                )}
               </button>
             </div>
           </div>
@@ -107,25 +106,14 @@ export default function Navbar() {
           <div className="flex items-center gap-2 md:hidden">
             <button
               onClick={toggleLanguage}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="p-2 rounded-lg transition-colors hover:bg-white/10"
             >
               <span className="text-lg">{currentLanguage.flag}</span>
             </button>
 
             <button
-              onClick={toggleDarkMode}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            >
-              {darkMode ? (
-                <FiSun className="w-5 h-5 text-yellow-500" />
-              ) : (
-                <FiMoon className="w-5 h-5 text-gray-700" />
-              )}
-            </button>
-
-            <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="p-2 rounded-lg transition-colors hover:bg-white/10 text-gray-200"
             >
               {isOpen ? (
                 <FiX className="w-6 h-6" />
@@ -143,7 +131,7 @@ export default function Navbar() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900"
+              className="md:hidden border-t border-white/10 bg-[#0a0a1a]/95 backdrop-blur-xl"
             >
               <ul className="py-4 space-y-2">
                 {navLinks.map((link) => (
@@ -153,8 +141,8 @@ export default function Navbar() {
                       className={({ isActive }) =>
                         `block px-4 py-2 font-medium transition-colors ${
                           isActive
-                            ? "text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20"
-                            : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+                            ? "text-violet-400 bg-violet-900/20"
+                            : "text-gray-300 hover:bg-white/5"
                         }`
                       }
                     >
