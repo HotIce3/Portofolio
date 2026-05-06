@@ -68,7 +68,12 @@ export default function About() {
   ];
 
   const [profile, setProfile] = useState(fallbackProfile);
-  const [skills, setSkills] = useState(fallbackSkills);
+  const [skills, setSkills] = useState(() => 
+    [...fallbackSkills].sort((a, b) => {
+      if (b.proficiency !== a.proficiency) return b.proficiency - a.proficiency;
+      return a.name.localeCompare(b.name);
+    })
+  );
   const [experiences, setExperiences] = useState([]);
   const [education, setEducation] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -92,7 +97,12 @@ export default function About() {
 
         if (skillsRes.status === "fulfilled") {
           const data = skillsRes.value.data;
-          setSkills(Array.isArray(data) && data.length ? data : fallbackSkills);
+          const fetchedSkills = Array.isArray(data) && data.length ? data : fallbackSkills;
+          const sortedSkills = [...fetchedSkills].sort((a, b) => {
+            if (b.proficiency !== a.proficiency) return b.proficiency - a.proficiency;
+            return a.name.localeCompare(b.name);
+          });
+          setSkills(sortedSkills);
         }
 
         if (expRes.status === "fulfilled") {

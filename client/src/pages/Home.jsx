@@ -88,7 +88,12 @@ export default function Home() {
 
   const [profile, setProfile] = useState(fallbackProfile);
   const [projects, setProjects] = useState([]);
-  const [skills, setSkills] = useState(fallbackSkills);
+  const [skills, setSkills] = useState(() => 
+    [...fallbackSkills].sort((a, b) => {
+      if (b.proficiency !== a.proficiency) return b.proficiency - a.proficiency;
+      return a.name.localeCompare(b.name);
+    })
+  );
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -107,7 +112,15 @@ export default function Home() {
           setProjects(Array.isArray(data) ? data.slice(0, 3) : []);
         }
         if (skillsRes.status === "fulfilled") {
-          setSkills(skillsRes.value.data.length ? skillsRes.value.data : fallbackSkills);
+          const fetchedSkills = skillsRes.value.data.length ? skillsRes.value.data : fallbackSkills;
+          // Sort skills consistently to prevent order changing on tab switch
+          const sortedSkills = [...fetchedSkills].sort((a, b) => {
+            if (b.proficiency !== a.proficiency) {
+              return b.proficiency - a.proficiency; // Highest proficiency first
+            }
+            return a.name.localeCompare(b.name); // Alphabetical fallback
+          });
+          setSkills(sortedSkills);
         }
       } catch (error) {
         console.error("Failed to fetch data:", error);
