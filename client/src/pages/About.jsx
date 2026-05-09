@@ -68,7 +68,7 @@ export default function About() {
   ];
 
   const [profile, setProfile] = useState(fallbackProfile);
-  const [skills, setSkills] = useState(() => 
+  const [skills, setSkills] = useState(() =>
     [...fallbackSkills].sort((a, b) => {
       if (b.proficiency !== a.proficiency) return b.proficiency - a.proficiency;
       return a.name.localeCompare(b.name);
