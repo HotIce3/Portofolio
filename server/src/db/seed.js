@@ -116,7 +116,7 @@ const seed = async () => {
         thumbnail: "https://api.microlink.io/?url=https://umkm-growth-copilot.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
         demo_url: "https://umkm-growth-copilot.vercel.app/",
         github_url: "https://github.com/Filbert-Lab/UMKM-Growth-Copilot",
-        tech_stack: ["React", "Vite", "Groq API", "Whisper AI", "Tailwind CSS", "JavaScript", "Framer Motion"],
+        tech_stack: ["Next.js", "Tailwind CSS", "Groq API", "Hugging Face"],
         category: "AI / Web App",
         featured: true,
         is_published: true,
