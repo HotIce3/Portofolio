@@ -1,238 +1,237 @@
-# 🚀 Filbert Matthew - Portfolio Website
+# 🚀 Filbert Matthew — 3D Portfolio Website
 
-A modern, fullstack portfolio website built with React, Node.js, and PostgreSQL. Features a beautiful 3D immersive design with multi-language support and database-driven project management.
+A **fullstack, immersive 3D portfolio** built with React, Three.js, Node.js, and PostgreSQL. Features a cinematic dark-themed UI with galaxy particle effects, interactive skill constellations, holographic project displays, and multi-language support.
+
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-6366f1?style=for-the-badge&logo=vercel)](https://vercel.com)
+[![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react)](https://react.dev)
+[![Three.js](https://img.shields.io/badge/Three.js-r160-white?style=flat-square&logo=threedotjs)](https://threejs.org)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=flat-square&logo=nodedotjs)](https://nodejs.org)
+
+---
 
 ## ✨ Features
 
-- **3D Immersive Design** - Modern, professional design with 3D elements and animations
-- **Multi-language** - English and Indonesian support
-- **Database-Driven Projects** - Projects fetched from PostgreSQL database
-- **Admin Panel** - Manage projects, messages, and profile
-- **Contact Form** - Receive messages from visitors
-- **Responsive** - Looks great on all devices
-- **SEO Optimized** - Meta tags and structured data
-- **Fast** - Built with Vite for blazing fast performance
+| Feature | Description |
+|---|---|
+| 🌌 **3D Hero Scene** | Galaxy spiral particles + floating crystalline geometries with iridescent materials |
+| 🔮 **Skills Constellation** | Interactive 3D node graph — hover to light up each skill |
+| 🃏 **Holographic Projects** | Translucent holographic card display for project showcase |
+| 📬 **Contact Scene** | Animated wave mesh + floating envelope 3D background |
+| 🌐 **i18n** | Full English & Bahasa Indonesia support |
+| 🗄️ **Database-Driven** | Projects, skills, experience pulled from PostgreSQL (Neon) |
+| 🔐 **Admin Panel** | JWT-authenticated dashboard for content management |
+| 📱 **Responsive** | Optimized for desktop, tablet, and mobile |
+| ⚡ **Blazing Fast** | Vite + lazy-loaded Three.js scenes |
+
+---
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-
-- React 18
-- Vite
-- Tailwind CSS
-- Framer Motion
-- React Router
-- i18next
-- Three.js (3D animations)
+- **React 18** — UI framework
+- **Vite 5** — Build tool
+- **Three.js r160** — 3D engine
+- **@react-three/fiber** — React renderer for Three.js
+- **@react-three/drei** — Three.js helpers (Stars, Float, Html, MeshDistortMaterial…)
+- **Framer Motion** — Page & element animations
+- **Tailwind CSS** — Utility-first styling
+- **i18next** — Internationalization
+- **React Router v6** — Client-side routing
 
 ### Backend
+- **Node.js + Express.js** — REST API
+- **PostgreSQL (Neon)** — Serverless Postgres database
+- **JWT + bcrypt** — Authentication
 
-- Node.js
-- Express.js
-- PostgreSQL (Neon)
-- JWT Authentication
-- bcrypt
+### Infrastructure
+- **Vercel** — Frontend hosting + Serverless functions
+- **Neon** — Serverless PostgreSQL
 
-### Database Schema
-
-- **Projects**: Dynamic project management with tech stack, thumbnails, and demo links
-- **Profile**: Personal information and social links
-- **Skills**: Technical skills with proficiency levels
-- **Contact Messages**: Visitor message collection
-- **Experience/Education**: Professional background
-
-### Deployment
-
-- Vercel (Frontend + Serverless Functions)
-- Neon (PostgreSQL Database)
+---
 
 ## 📦 Project Structure
 
 ```
 filbert-matthew-portfolio/
-├── client/                 # React frontend
-│   ├── src/
-│   │   ├── components/    # Reusable components
-│   │   ├── contexts/      # React contexts
-│   │   ├── i18n/          # Translations
-│   │   ├── pages/         # Page components
-│   │   └── services/      # API services
-│   └── ...
-├── server/                 # Node.js backend
+├── client/                     # React + Vite frontend
+│   ├── public/
 │   └── src/
-│       ├── db/            # Database config & migrations
-│       ├── middleware/    # Express middleware
-│       └── routes/        # API routes
-└── vercel.json            # Vercel configuration
+│       ├── components/
+│       │   ├── Layout/         # Navbar, Footer
+│       │   ├── UI/             # LoadingSpinner, etc.
+│       │   └── three/          # All Three.js scenes
+│       │       ├── HeroScene.jsx       # Galaxy hero background
+│       │       ├── ParticleField.jsx   # Spiral particle system
+│       │       ├── FloatingGeometry.jsx # Crystalline 3D shapes
+│       │       ├── GridFloor.jsx       # Animated grid + rings
+│       │       ├── SkillsScene.jsx     # Interactive constellation
+│       │       ├── ProjectsScene.jsx   # Holographic cards scene
+│       │       └── ContactScene.jsx    # Wave mesh + envelopes
+│       ├── contexts/           # React contexts (Language, etc.)
+│       ├── i18n/               # Translation files (en, id)
+│       ├── pages/              # Page components
+│       │   ├── Home.jsx
+│       │   ├── About.jsx
+│       │   ├── Projects.jsx
+│       │   ├── ProjectDetail.jsx
+│       │   ├── Contact.jsx
+│       │   └── Login.jsx
+│       └── services/           # Axios API services
+├── server/                     # Express.js backend
+│   └── src/
+│       ├── db/                 # Database config & migrations
+│       ├── middleware/         # Auth middleware
+│       └── routes/             # API routes
+├── api/                        # Vercel serverless entry
+│   └── index.js
+├── vercel.json                 # Vercel routing config
+└── .gitignore
 ```
+
+---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
 - Node.js 18+
-- npm or yarn
-- PostgreSQL database (or Neon account)
+- npm 9+
+- A PostgreSQL database (or free [Neon](https://neon.tech) account)
 
-### Installation
-
-1. **Clone the repository**
-
-   ```bash
-   git clone https://github.com/filbertmatthew/portfolio.git
-   cd portfolio
-   ```
-
-2. **Install dependencies**
-
-   ```bash
-   npm install
-   ```
-
-3. **Configure environment variables**
-
-   Server (.env):
-
-   ```bash
-   cd server
-   cp .env.example .env
-   ```
-
-   Edit `server/.env`:
-
-   ```env
-   PORT=5000
-   NODE_ENV=development
-   DATABASE_URL=postgresql://user:pass@host/db?sslmode=require
-   JWT_SECRET=your-super-secret-key
-   JWT_EXPIRES_IN=7d
-   CLIENT_URL=http://localhost:5173
-   ```
-
-4. **Run database migrations**
-
-   ```bash
-   npm run db:migrate
-   ```
-
-5. **Seed the database (recommended)**
-
-   This will add sample projects including the Financial Management project:
-   
-   ```bash
-   npm run db:seed
-   ```
-
-   **Sample Projects Added:**
-   - Kopi Nusantara Brew (Coffee Shop Website)
-   - Financial Manage Dwivan (Financial Planning App)
-   - E-Commerce Platform
-   - Task Management App
-
-6. **Start development servers**
-
-   ```bash
-   npm run dev
-   ```
-
-   This will start:
-   - Frontend: http://localhost:5173
-   - Backend: http://localhost:5000
-
-### Default Admin Credentials
-
-After seeding the database:
-
-- **Email:** filbertmathew63@gmail.com
-- **Password:** admin123
-
-## 🌐 Deployment to Vercel
-
-### 1. Create a Neon Database
-
-1. Go to [neon.tech](https://neon.tech) and create a free account
-2. Create a new project and database
-3. Copy the connection string
-
-### 2. Deploy to Vercel
-
-1. Push your code to GitHub
-2. Import the project to Vercel
-3. Configure environment variables:
-   - `DATABASE_URL` - Neon connection string
-   - `JWT_SECRET` - Random secure string
-   - `JWT_EXPIRES_IN` - e.g., "7d"
-   - `NODE_ENV` - "production"
-   - `CLIENT_URL` - Your Vercel domain
-
-4. Deploy!
-
-### 3. Run Migrations on Production
-
-After deployment, run migrations via Vercel CLI or connect to your database:
+### 1. Clone & Install
 
 ```bash
+git clone https://github.com/HotIce3/Portofolio.git
+cd Portofolio
+npm install
+```
+
+### 2. Configure Environment
+
+```bash
+cd server
+cp .env.example .env
+```
+
+Edit `server/.env`:
+
+```env
+PORT=5000
+NODE_ENV=development
+DATABASE_URL=postgresql://user:pass@host/db?sslmode=require
+JWT_SECRET=your-super-secret-jwt-key
+JWT_EXPIRES_IN=7d
+CLIENT_URL=http://localhost:5173
+```
+
+### 3. Run Database Migrations
+
+```bash
+# From project root
 npm run db:migrate
 npm run db:seed
 ```
 
-## 📝 API Endpoints
+### 4. Start Development Servers
 
-### Public
+```bash
+npm run dev
+```
 
-- `GET /api/profile` - Get profile info
-- `GET /api/projects` - List projects
-- `GET /api/projects/slug/:slug` - Get project by slug
-- `POST /api/contact` - Submit contact form
+This starts:
+- 🎨 Frontend: [http://localhost:5173](http://localhost:5173)
+- 🔌 Backend: [http://localhost:5000](http://localhost:5000)
+
+---
+
+## 🌐 Deployment (Vercel + Neon)
+
+### Step 1: Neon Database
+
+1. Create a free account at [neon.tech](https://neon.tech)
+2. Create a project and copy the connection string
+
+### Step 2: Deploy to Vercel
+
+1. Push to GitHub
+2. Import repo in Vercel dashboard
+3. Set these environment variables:
+
+| Variable | Value |
+|---|---|
+| `DATABASE_URL` | Neon connection string |
+| `JWT_SECRET` | Random secure string |
+| `JWT_EXPIRES_IN` | `7d` |
+| `NODE_ENV` | `production` |
+| `CLIENT_URL` | Your Vercel domain |
+
+4. Build command: `npm run vercel-build`  
+   Output directory: `dist`
+
+---
+
+## 📡 API Reference
+
+### Public Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/profile` | Get profile info |
+| `GET` | `/api/projects` | List all projects |
+| `GET` | `/api/projects/slug/:slug` | Get project by slug |
+| `POST` | `/api/contact` | Submit contact form |
 
 ### Protected (Admin)
 
-- `POST /api/auth/login` - Login
-- `GET /api/auth/me` - Get current user
-- `GET /api/admin/stats` - Dashboard statistics
-- `CRUD /api/admin/skills` - Manage skills
-- `CRUD /api/admin/experiences` - Manage experiences
-- `CRUD /api/admin/education` - Manage education
-- `CRUD /api/admin/testimonials` - Manage testimonials
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/auth/login` | Admin login |
+| `GET` | `/api/auth/me` | Current user info |
+| `GET` | `/api/admin/stats` | Dashboard statistics |
+| `CRUD` | `/api/admin/skills` | Manage skills |
+| `CRUD` | `/api/admin/experiences` | Manage experiences |
+| `CRUD` | `/api/admin/education` | Manage education |
 
-## 🎨 Customization
+---
 
-### Colors
+## 🎨 3D Scene Overview
 
-Edit `client/tailwind.config.js` to change the primary color:
+### Hero Scene
+Galaxy-inspired **spiral particle field** (2,000+ particles) with mouse parallax, animated crystalline icosahedra, wobble tori, energy orbs, radial grid rings, and deep-space stars via `@react-three/drei`.
 
-```js
-colors: {
-  primary: {
-    500: '#3b82f6', // Your color
-    // ...
-  }
-}
-```
+### Skills Constellation
+12 interactive **dodecahedron nodes** connected by distance-based line beams. Each node has iridescent material, orbit ring on hover, and glows with colored point lights. Central **nexus** orb with triple-orbit rings.
 
-### Translations
+### Projects Scene
+**Holographic UI cards** with edge light lines + translucent glass body. Central distortion orb with 3 orbiting energy rings and floating data particles.
 
-Edit files in `client/src/i18n/locales/`:
+### Contact Scene
+Animated **wave-distortion plane** mesh + floating envelope objects with glass materials.
 
-- `en.json` - English
-- `id.json` - Indonesian
+---
 
-### Profile
+## 🌏 Localization
 
-Use the admin panel at `/admin/profile` to update your information.
+Edit `client/src/i18n/locales/`:
+- `en.json` — English
+- `id.json` — Bahasa Indonesia
 
-## 📄 License
-
-MIT License - feel free to use this for your own portfolio!
+---
 
 ## 👤 Author
 
 **Filbert Matthew**
 
-- Email: filbertmathew63@gmail.com
-- GitHub: [@filbertmatthew](https://github.com/HotIce3/)
-- LinkedIn: [filbertmatthew](https://www.linkedin.com/in/fil-mat-b21958337/)
+- 📧 [filbertmathew63@gmail.com](mailto:filbertmathew63@gmail.com)
+- 🐙 [github.com/HotIce3](https://github.com/HotIce3/)
+- 💼 [linkedin.com/in/fil-mat-b21958337](https://www.linkedin.com/in/fil-mat-b21958337/)
 
 ---
 
-Made with ❤️ by Filbert Matthew
+## 📄 License
+
+MIT License — feel free to use as a template for your own portfolio!
+
+---
+
+<div align="center">Made with ❤️ + Three.js by Filbert Matthew</div>

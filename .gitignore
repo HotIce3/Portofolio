@@ -1,55 +1,80 @@
+# ═══════════════════════════════════════════
 # Dependencies
-node_modules
+# ═══════════════════════════════════════════
+node_modules/
 .pnp
 .pnp.js
 
+# ═══════════════════════════════════════════
 # Build outputs
-dist
-build
-.next
-out
+# ═══════════════════════════════════════════
+dist/
+build/
+.next/
+out/
 
-# Environment files
+# ═══════════════════════════════════════════
+# Environment & secrets
+# ═══════════════════════════════════════════
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
+# ═══════════════════════════════════════════
 # Logs
+# ═══════════════════════════════════════════
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 *.log
 
-# IDE
-.idea
-.vscode
+# ═══════════════════════════════════════════
+# IDE / Editor
+# ═══════════════════════════════════════════
+.idea/
+.vscode/
 *.swp
 *.swo
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
 
+# ═══════════════════════════════════════════
 # OS files
+# ═══════════════════════════════════════════
 .DS_Store
 Thumbs.db
+desktop.ini
 
-# Test coverage
-coverage
+# ═══════════════════════════════════════════
+# Testing
+# ═══════════════════════════════════════════
+coverage/
+test-results/
+playwright-report/
 
-# Playwright / test artifacts
-test-results
-playwright-report
-
+# ═══════════════════════════════════════════
 # Vercel
-.vercel
+# ═══════════════════════════════════════════
+.vercel/
 
-# Vite cache
-.vite
+# ═══════════════════════════════════════════
+# Vite / Build cache
+# ═══════════════════════════════════════════
+.vite/
 
-# Uploaded files
+# ═══════════════════════════════════════════
+# Uploaded / generated files
+# ═══════════════════════════════════════════
 uploads/*
 !uploads/.gitkeep
 
-# Local utility scripts (contain secrets / machine-specific)
+# ═══════════════════════════════════════════
+# One-off utility & debug scripts (contain secrets or are machine-specific)
+# ═══════════════════════════════════════════
 check-db.js
 client/get_console_logs.js
 api/delete-projects.js
@@ -57,5 +82,12 @@ api/fix-schema.js
 api/insert-projects.js
 api/update-github.js
 
-# Accidental nested npm folder
+# Accidental nested api folder
 api/api/
+
+# ═══════════════════════════════════════════
+# Misc
+# ═══════════════════════════════════════════
+*.local
+*.tmp
+*.bak

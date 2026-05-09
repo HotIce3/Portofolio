@@ -807,3 +807,118 @@
     font-size: 0.95rem;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════ */
+/* ENHANCED VISUALS & MICRO-ANIMATIONS                            */
+/* ═══════════════════════════════════════════════════════════════ */
+
+/* Premium scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a1a;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #6366f1, #a78bfa);
+  border-radius: 9999px;
+}
+
+/* Selection color */
+::selection {
+  background: rgba(99, 102, 241, 0.3);
+  color: #e0e7ff;
+}
+
+/* Hero glow blob */
+.hero-3d-section::after {
+  content: "";
+  position: absolute;
+  top: 20%;
+  right: 10%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+  animation: hero-pulse 6s ease-in-out infinite;
+}
+
+@keyframes hero-pulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+/* Shimmer effect for project cards */
+.project-card-3d::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    rgba(167, 139, 250, 0.04) 50%,
+    transparent 70%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 5s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+/* Skill badge icon glow on hover */
+.skill-badge-3d:hover .skill-badge-icon {
+  filter: drop-shadow(0 0 6px var(--skill-color, #6366f1));
+}
+
+/* Projects section enhanced bg */
+.projects-3d-section::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(
+    circle,
+    rgba(99, 102, 241, 0.06) 0%,
+    transparent 65%
+  );
+  pointer-events: none;
+}
+
+/* Skills constellation container animated border */
+.skills-3d-container {
+  position: relative;
+}
+
+.skills-3d-container::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 25px;
+  background: linear-gradient(135deg, #6366f1, #a78bfa, #60a5fa, #6366f1);
+  background-size: 300% 300%;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  animation: border-rotate 4s linear infinite;
+}
+
+.skills-3d-container:hover::after {
+  opacity: 0.25;
+}
+
+@keyframes border-rotate {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+

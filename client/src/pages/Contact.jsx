@@ -14,7 +14,7 @@ import {
 import toast from "react-hot-toast";
 import { contactApi, profileApi } from "../services/api";
 
-const ProjectsScene = lazy(() => import("../components/three/ProjectsScene"));
+const ContactScene = lazy(() => import("../components/three/ContactScene"));
 
 export default function Contact() {
   const { t } = useTranslation();
@@ -73,10 +73,9 @@ export default function Contact() {
         <div className="absolute top-[20%] left-[10%] w-[400px] h-[400px] bg-primary-600/10 rounded-full blur-[100px] pointer-events-none z-0"></div>
         <div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] bg-violet-600/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
 
-        {/* 3D Scene (Background) */}
-        <div className="absolute inset-0 z-0 pointer-events-none opacity-40">
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-50">
           <Suspense fallback={null}>
-            <ProjectsScene />
+            <ContactScene />
           </Suspense>
         </div>
 
