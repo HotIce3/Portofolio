@@ -72,18 +72,18 @@ export default function Home() {
   };
 
   const fallbackSkills = [
-    { id: 1, name: "React", category: "Frontend", proficiency: 90 },
-    { id: 2, name: "JavaScript", category: "Frontend", proficiency: 92 },
-    { id: 3, name: "TypeScript", category: "Frontend", proficiency: 80 },
-    { id: 4, name: "Node.js", category: "Backend", proficiency: 85 },
-    { id: 5, name: "PostgreSQL", category: "Backend", proficiency: 82 },
-    { id: 6, name: "Tailwind CSS", category: "Frontend", proficiency: 88 },
-    { id: 7, name: "Python", category: "Backend", proficiency: 75 },
-    { id: 8, name: "Next.js", category: "Frontend", proficiency: 78 },
-    { id: 9, name: "Git", category: "Tools", proficiency: 88 },
-    { id: 10, name: "Docker", category: "Tools", proficiency: 70 },
-    { id: 11, name: "Vue.js", category: "Frontend", proficiency: 72 },
-    { id: 12, name: "MongoDB", category: "Backend", proficiency: 76 },
+    { id: "fallback-1", name: "React", category: "Frontend", proficiency: 90 },
+    { id: "fallback-2", name: "JavaScript", category: "Frontend", proficiency: 92 },
+    { id: "fallback-3", name: "TypeScript", category: "Frontend", proficiency: 80 },
+    { id: "fallback-4", name: "Node.js", category: "Backend", proficiency: 85 },
+    { id: "fallback-5", name: "PostgreSQL", category: "Backend", proficiency: 82 },
+    { id: "fallback-6", name: "Tailwind CSS", category: "Frontend", proficiency: 88 },
+    { id: "fallback-7", name: "Python", category: "Backend", proficiency: 75 },
+    { id: "fallback-8", name: "Next.js", category: "Frontend", proficiency: 78 },
+    { id: "fallback-9", name: "Git", category: "Tools", proficiency: 88 },
+    { id: "fallback-10", name: "Docker", category: "Tools", proficiency: 70 },
+    { id: "fallback-11", name: "Vue.js", category: "Frontend", proficiency: 72 },
+    { id: "fallback-12", name: "MongoDB", category: "Backend", proficiency: 76 },
   ];
 
   const [profile, setProfile] = useState(fallbackProfile);
@@ -296,22 +296,20 @@ export default function Home() {
           </motion.div>
 
           {/* Skill Badges Fallback / Additional Display */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={staggerContainer}
-            className="skills-badge-grid"
-          >
+          <div className="skills-badge-grid">
             {skills.slice(0, 12).map((skill, index) => {
               const skillData = skillIcons[skill.name];
               const IconComponent = skillData?.icon;
 
               return (
                 <motion.div
+                  layout
                   key={skill.id}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
                   variants={fadeUp}
-                  custom={index}
+                  custom={index % 12} // Use index for delay stagger manually
                   className="skill-badge-3d"
                   style={{
                     "--skill-color": skillData?.color || "#6366f1",

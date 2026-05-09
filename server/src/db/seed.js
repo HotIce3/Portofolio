@@ -106,6 +106,22 @@ const seed = async () => {
     // Add sample projects
     const projects = [
       {
+        title: "UMKM Growth Copilot AI",
+        title_id: "UMKM Growth Copilot AI",
+        slug: "umkm-growth-copilot",
+        description: "AI-powered business consulting platform for Indonesian SMEs. Powered by Groq LLM with realtime chat, promotional image generator, KPI Generator, Campaign Planner, Content Calendar AI, Break-Even Analyzer, and Loan Readiness Score.",
+        description_id: "Platform AI konsultasi bisnis untuk UMKM Indonesia. Chat realtime, generator gambar promosi, KPI Generator, Campaign Planner, Content Calendar AI, Break-Even Analyzer, dan Loan Readiness Score.",
+        content: "UMKM Growth Copilot is an AI assistant designed to help Indonesian Micro, Small, and Medium Enterprises (MSMEs) grow faster. The platform leverages Groq LLM to provide intelligent, context-aware real-time business consulting.\n\nKey Features:\n• Realtime AI chat + promotional image generator mode\n• Configurable persona, tone, language, sector & business scale context\n• Automatic local storage of consultation history\n• Export consultations to Markdown files\n• 6 ready-to-use prompt templates for various business needs\n• Session statistics & token usage estimation\n• KPI Generator & Campaign Planner\n• Content Calendar AI for content strategy\n• Break-Even Analyzer & Cashflow Alert\n• Product Bundling Recommender\n• Customer Persona Builder\n• Loan Readiness Score for capital loan preparation\n• Team Collaboration Workspace",
+        content_id: "UMKM Growth Copilot adalah asisten AI khusus untuk membantu UMKM Indonesia bertumbuh lebih cepat. Platform ini memanfaatkan Groq LLM untuk konsultasi bisnis realtime yang cerdas.\n\nFitur Utama:\n• Chat AI realtime + mode generator gambar promosi\n• Konteks persona, tone, bahasa, sektor & skala usaha\n• Penyimpanan riwayat konsultasi otomatis\n• Export ke Markdown\n• 6 template prompt siap pakai\n• KPI Generator & Campaign Planner\n• Content Calendar AI\n• Break-Even Analyzer & Cashflow Alert\n• Product Bundling Recommender\n• Customer Persona Builder\n• Loan Readiness Score\n• Team Collaboration Workspace",
+        thumbnail: "https://api.microlink.io/?url=https://umkm-growth-copilot.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
+        demo_url: "https://umkm-growth-copilot.vercel.app/",
+        github_url: "https://github.com/Filbert-Lab/UMKM-Growth-Copilot",
+        tech_stack: ["React", "Vite", "Groq API", "Whisper AI", "Tailwind CSS", "JavaScript", "Framer Motion"],
+        category: "AI / Web App",
+        featured: true,
+        is_published: true,
+      },
+      {
         title: "Kopi Nusantara Brew",
         title_id: "Kopi Nusantara Brew",
         slug: "kopi-nusantara-brew",

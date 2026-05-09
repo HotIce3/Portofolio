@@ -586,7 +586,7 @@ app.get("/api/seed", async (req, res) => {
       }
     }
 
-    // Seed projects
+    // Seed Kopi Nusantara Brew if not exists
     const existingProjects =
       await sql`SELECT id FROM projects WHERE slug = 'kopi-nusantara-brew'`;
 
@@ -606,13 +606,36 @@ app.get("/api/seed", async (req, res) => {
           true
         )
       `;
-    } else {
-      // Update existing project with correct urls and thumbnail
+    }
+
+    // Seed UMKM Growth Copilot if not exists
+    const existingUMKM = await sql`SELECT id FROM projects WHERE slug = 'umkm-growth-copilot'`;
+    if (existingUMKM.length === 0) {
       await sql`
-        UPDATE projects 
-        SET github_url = 'https://website-portofolio-ivory-mu.vercel.app/',
-            thumbnail = 'https://api.microlink.io/?url=https://website-portofolio-ivory-mu.vercel.app&screenshot=true&meta=false&embed=screenshot.url'
-        WHERE slug = 'kopi-nusantara-brew'
+        INSERT INTO projects (
+          title, title_id, slug,
+          description, description_id,
+          content, content_id,
+          thumbnail, tech_stack,
+          demo_url, github_url,
+          category, featured, is_published, status
+        ) VALUES (
+          'UMKM Growth Copilot AI',
+          'UMKM Growth Copilot AI',
+          'umkm-growth-copilot',
+          'AI-powered business consulting platform for Indonesian SMEs. Powered by Groq LLM with realtime chat, promotional image generator, KPI Generator, Campaign Planner, Content Calendar AI, Break-Even Analyzer, and Loan Readiness Score.',
+          'Platform AI konsultasi bisnis untuk UMKM Indonesia. Chat realtime, generator gambar promosi, KPI Generator, Campaign Planner, Content Calendar AI, Break-Even Analyzer, dan Loan Readiness Score.',
+          'UMKM Growth Copilot is an AI assistant designed to help Indonesian Micro, Small, and Medium Enterprises (MSMEs) grow faster. The platform leverages Groq LLM to provide intelligent, context-aware real-time business consulting.\n\nKey Features:\n• Realtime AI chat + promotional image generator mode\n• Configurable persona, tone, language, sector & business scale context\n• Automatic local storage of consultation history\n• Export consultations to Markdown files\n• 6 ready-to-use prompt templates for various business needs\n• Session statistics & token usage estimation\n• KPI Generator & Campaign Planner\n• Content Calendar AI for content strategy\n• Break-Even Analyzer & Cashflow Alert\n• Product Bundling Recommender\n• Customer Persona Builder\n• Loan Readiness Score for capital loan preparation\n• Team Collaboration Workspace',
+          'UMKM Growth Copilot adalah asisten AI khusus untuk membantu UMKM Indonesia bertumbuh lebih cepat. Platform ini memanfaatkan Groq LLM untuk konsultasi bisnis realtime yang cerdas.\n\nFitur Utama:\n• Chat AI realtime + mode generator gambar promosi\n• Konteks persona, tone, bahasa, sektor & skala usaha\n• Penyimpanan riwayat konsultasi otomatis\n• Export ke Markdown\n• 6 template prompt siap pakai\n• KPI Generator & Campaign Planner\n• Content Calendar AI\n• Break-Even Analyzer & Cashflow Alert\n• Product Bundling Recommender\n• Customer Persona Builder\n• Loan Readiness Score\n• Team Collaboration Workspace',
+          'https://api.microlink.io/?url=https://umkm-growth-copilot.vercel.app&screenshot=true&meta=false&embed=screenshot.url',
+          ARRAY['React', 'Vite', 'Groq API', 'Whisper AI', 'Tailwind CSS', 'JavaScript', 'Framer Motion'],
+          'https://umkm-growth-copilot.vercel.app/',
+          'https://github.com/Filbert-Lab/UMKM-Growth-Copilot',
+          'AI / Web App',
+          true,
+          true,
+          'published'
+        )
       `;
     }
 

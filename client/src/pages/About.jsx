@@ -53,18 +53,18 @@ export default function About() {
   };
 
   const fallbackSkills = [
-    { id: 1, name: "React", category: "Frontend", proficiency: 90 },
-    { id: 2, name: "JavaScript", category: "Frontend", proficiency: 92 },
-    { id: 3, name: "TypeScript", category: "Frontend", proficiency: 80 },
-    { id: 4, name: "Node.js", category: "Backend", proficiency: 85 },
-    { id: 5, name: "PostgreSQL", category: "Backend", proficiency: 82 },
-    { id: 6, name: "Tailwind CSS", category: "Frontend", proficiency: 88 },
-    { id: 7, name: "Python", category: "Backend", proficiency: 75 },
-    { id: 8, name: "Next.js", category: "Frontend", proficiency: 78 },
-    { id: 9, name: "Git", category: "Tools", proficiency: 88 },
-    { id: 10, name: "Docker", category: "Tools", proficiency: 70 },
-    { id: 11, name: "Vue.js", category: "Frontend", proficiency: 72 },
-    { id: 12, name: "MongoDB", category: "Backend", proficiency: 76 },
+    { id: "fallback-1", name: "React", category: "Frontend", proficiency: 90 },
+    { id: "fallback-2", name: "JavaScript", category: "Frontend", proficiency: 92 },
+    { id: "fallback-3", name: "TypeScript", category: "Frontend", proficiency: 80 },
+    { id: "fallback-4", name: "Node.js", category: "Backend", proficiency: 85 },
+    { id: "fallback-5", name: "PostgreSQL", category: "Backend", proficiency: 82 },
+    { id: "fallback-6", name: "Tailwind CSS", category: "Frontend", proficiency: 88 },
+    { id: "fallback-7", name: "Python", category: "Backend", proficiency: 75 },
+    { id: "fallback-8", name: "Next.js", category: "Frontend", proficiency: 78 },
+    { id: "fallback-9", name: "Git", category: "Tools", proficiency: 88 },
+    { id: "fallback-10", name: "Docker", category: "Tools", proficiency: 70 },
+    { id: "fallback-11", name: "Vue.js", category: "Frontend", proficiency: 72 },
+    { id: "fallback-12", name: "MongoDB", category: "Backend", proficiency: 76 },
   ];
 
   const [profile, setProfile] = useState(fallbackProfile);
