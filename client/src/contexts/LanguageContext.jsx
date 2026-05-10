@@ -4,8 +4,8 @@ import { useTranslation } from "react-i18next";
 const LanguageContext = createContext();
 
 export const LANGUAGES = {
-  en: { code: "en", name: "English", flag: "🇺🇸" },
-  id: { code: "id", name: "Indonesia", flag: "🇮🇩" },
+  en: { code: "en", name: "English", flag: "EN" },
+  id: { code: "id", name: "Indonesia", flag: "ID" },
 };
 
 export function LanguageProvider({ children }) {

@@ -8,6 +8,7 @@ import {
   FiGithub,
   FiLinkedin,
   FiMail,
+  FiTwitter,
   FiExternalLink,
   FiChevronDown,
 } from "react-icons/fi";
@@ -65,34 +66,71 @@ export default function Home() {
     name: "Filbert Matthew",
     title: "Full Stack Web Developer",
     bio: "Passionate Full Stack Developer creating modern web applications with cutting-edge technologies. Experienced in React, Node.js, and cloud deployment.",
-    bio_id: "Full Stack Developer yang bersemangat dalam membuat aplikasi web modern dengan teknologi terkini. Berpengalaman di React, Node.js, dan cloud deployment.",
+    bio_id:
+      "Full Stack Developer yang bersemangat dalam membuat aplikasi web modern dengan teknologi terkini. Berpengalaman di React, Node.js, dan cloud deployment.",
     email: "filbertmathew63@gmail.com",
     github_url: "https://github.com/HotIce3/",
     linkedin_url: "https://www.linkedin.com/in/fil-mat-b21958337/",
+    twitter_url: "",
   };
 
   const fallbackSkills = [
     { id: "fallback-1", name: "React", category: "Frontend", proficiency: 90 },
-    { id: "fallback-2", name: "JavaScript", category: "Frontend", proficiency: 92 },
-    { id: "fallback-3", name: "TypeScript", category: "Frontend", proficiency: 80 },
+    {
+      id: "fallback-2",
+      name: "JavaScript",
+      category: "Frontend",
+      proficiency: 92,
+    },
+    {
+      id: "fallback-3",
+      name: "TypeScript",
+      category: "Frontend",
+      proficiency: 80,
+    },
     { id: "fallback-4", name: "Node.js", category: "Backend", proficiency: 85 },
-    { id: "fallback-5", name: "PostgreSQL", category: "Backend", proficiency: 82 },
-    { id: "fallback-6", name: "Tailwind CSS", category: "Frontend", proficiency: 88 },
+    {
+      id: "fallback-5",
+      name: "PostgreSQL",
+      category: "Backend",
+      proficiency: 82,
+    },
+    {
+      id: "fallback-6",
+      name: "Tailwind CSS",
+      category: "Frontend",
+      proficiency: 88,
+    },
     { id: "fallback-7", name: "Python", category: "Backend", proficiency: 75 },
-    { id: "fallback-8", name: "Next.js", category: "Frontend", proficiency: 78 },
+    {
+      id: "fallback-8",
+      name: "Next.js",
+      category: "Frontend",
+      proficiency: 78,
+    },
     { id: "fallback-9", name: "Git", category: "Tools", proficiency: 88 },
     { id: "fallback-10", name: "Docker", category: "Tools", proficiency: 70 },
-    { id: "fallback-11", name: "Vue.js", category: "Frontend", proficiency: 72 },
-    { id: "fallback-12", name: "MongoDB", category: "Backend", proficiency: 76 },
+    {
+      id: "fallback-11",
+      name: "Vue.js",
+      category: "Frontend",
+      proficiency: 72,
+    },
+    {
+      id: "fallback-12",
+      name: "MongoDB",
+      category: "Backend",
+      proficiency: 76,
+    },
   ];
 
   const [profile, setProfile] = useState(fallbackProfile);
   const [projects, setProjects] = useState([]);
-  const [skills, setSkills] = useState(() => 
+  const [skills, setSkills] = useState(() =>
     [...fallbackSkills].sort((a, b) => {
       if (b.proficiency !== a.proficiency) return b.proficiency - a.proficiency;
       return a.name.localeCompare(b.name);
-    })
+    }),
   );
   const [loading, setLoading] = useState(false);
 
@@ -105,14 +143,18 @@ export default function Home() {
           profileApi.getSkills(),
         ]);
         if (profileRes.status === "fulfilled") {
-          setProfile(profileRes.value.data.profile || fallbackProfile);
+          const data = profileRes.value.data;
+          const normalizedProfile = data?.profile ?? data;
+          setProfile({ ...fallbackProfile, ...(normalizedProfile || {}) });
         }
         if (projectsRes.status === "fulfilled") {
           const data = projectsRes.value.data;
           setProjects(Array.isArray(data) ? data.slice(0, 3) : []);
         }
         if (skillsRes.status === "fulfilled") {
-          const fetchedSkills = skillsRes.value.data.length ? skillsRes.value.data : fallbackSkills;
+          const fetchedSkills = skillsRes.value.data.length
+            ? skillsRes.value.data
+            : fallbackSkills;
           // Sort skills consistently to prevent order changing on tab switch
           const sortedSkills = [...fetchedSkills].sort((a, b) => {
             if (b.proficiency !== a.proficiency) {
@@ -130,9 +172,26 @@ export default function Home() {
   }, []);
 
   const socialLinks = [
-    { icon: FiGithub, href: profile?.github_url, label: "GitHub" },
-    { icon: FiLinkedin, href: profile?.linkedin_url, label: "LinkedIn" },
-    { icon: FiMail, href: `mailto:${profile?.email}`, label: "Email" },
+    {
+      icon: FiGithub,
+      href: profile?.github_url || fallbackProfile.github_url,
+      label: "GitHub",
+    },
+    {
+      icon: FiTwitter,
+      href: profile?.twitter_url || fallbackProfile.twitter_url,
+      label: "Twitter",
+    },
+    {
+      icon: FiLinkedin,
+      href: profile?.linkedin_url || fallbackProfile.linkedin_url,
+      label: "LinkedIn",
+    },
+    {
+      icon: FiMail,
+      href: `mailto:${profile?.email || fallbackProfile.email}`,
+      label: "Email",
+    },
   ];
 
   const skillIcons = {
@@ -192,11 +251,7 @@ export default function Home() {
               variants={staggerContainer}
               className="hero-text-block"
             >
-              <motion.div
-                variants={fadeUp}
-                custom={0}
-                className="hero-badge"
-              >
+              <motion.div variants={fadeUp} custom={0} className="hero-badge">
                 <span className="hero-badge-dot" />
                 <span>{t("hero.greeting")}</span>
               </motion.div>
@@ -209,31 +264,39 @@ export default function Home() {
                 {t("hero.title")}
               </motion.h2>
 
-              <motion.p variants={fadeUp} custom={3} className="hero-description">
+              <motion.p
+                variants={fadeUp}
+                custom={3}
+                className="hero-description"
+              >
                 {language === "id"
-                  ? profile?.bio_id
-                  : profile?.bio || t("hero.description")}
+                  ? profile?.bio_id ||
+                    fallbackProfile.bio_id ||
+                    t("hero.description")
+                  : profile?.bio ||
+                    fallbackProfile.bio ||
+                    t("hero.description")}
               </motion.p>
 
-              <motion.div
-                variants={fadeUp}
-                custom={4}
-                className="hero-actions"
-              >
-                <Link to="/projects" className="hero-btn-primary" id="cta-projects">
+              <motion.div variants={fadeUp} custom={4} className="hero-actions">
+                <Link
+                  to="/projects"
+                  className="hero-btn-primary"
+                  id="cta-projects"
+                >
                   <span>{t("hero.cta")}</span>
                   <FiArrowRight className="hero-btn-icon" />
                 </Link>
-                <Link to="/contact" className="hero-btn-outline" id="cta-contact">
+                <Link
+                  to="/contact"
+                  className="hero-btn-outline"
+                  id="cta-contact"
+                >
                   <span>{t("hero.contact")}</span>
                 </Link>
               </motion.div>
 
-              <motion.div
-                variants={fadeUp}
-                custom={5}
-                className="hero-socials"
-              >
+              <motion.div variants={fadeUp} custom={5} className="hero-socials">
                 {socialLinks.map(
                   (social) =>
                     social.href && (
@@ -290,7 +353,9 @@ export default function Home() {
             transition={{ duration: 0.8 }}
             className="skills-3d-container"
           >
-            <Suspense fallback={<div className="skills-loading">Loading 3D...</div>}>
+            <Suspense
+              fallback={<div className="skills-loading">Loading 3D...</div>}
+            >
               <SkillsScene />
             </Suspense>
           </motion.div>
@@ -322,7 +387,9 @@ export default function Home() {
                     />
                   )}
                   <span className="skill-badge-name">{skill.name}</span>
-                  <span className="skill-badge-level">{skill.proficiency}%</span>
+                  <span className="skill-badge-level">
+                    {skill.proficiency}%
+                  </span>
                 </motion.div>
               );
             })}

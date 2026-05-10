@@ -54,17 +54,52 @@ export default function About() {
 
   const fallbackSkills = [
     { id: "fallback-1", name: "React", category: "Frontend", proficiency: 90 },
-    { id: "fallback-2", name: "JavaScript", category: "Frontend", proficiency: 92 },
-    { id: "fallback-3", name: "TypeScript", category: "Frontend", proficiency: 80 },
+    {
+      id: "fallback-2",
+      name: "JavaScript",
+      category: "Frontend",
+      proficiency: 92,
+    },
+    {
+      id: "fallback-3",
+      name: "TypeScript",
+      category: "Frontend",
+      proficiency: 80,
+    },
     { id: "fallback-4", name: "Node.js", category: "Backend", proficiency: 85 },
-    { id: "fallback-5", name: "PostgreSQL", category: "Backend", proficiency: 82 },
-    { id: "fallback-6", name: "Tailwind CSS", category: "Frontend", proficiency: 88 },
+    {
+      id: "fallback-5",
+      name: "PostgreSQL",
+      category: "Backend",
+      proficiency: 82,
+    },
+    {
+      id: "fallback-6",
+      name: "Tailwind CSS",
+      category: "Frontend",
+      proficiency: 88,
+    },
     { id: "fallback-7", name: "Python", category: "Backend", proficiency: 75 },
-    { id: "fallback-8", name: "Next.js", category: "Frontend", proficiency: 78 },
+    {
+      id: "fallback-8",
+      name: "Next.js",
+      category: "Frontend",
+      proficiency: 78,
+    },
     { id: "fallback-9", name: "Git", category: "Tools", proficiency: 88 },
     { id: "fallback-10", name: "Docker", category: "Tools", proficiency: 70 },
-    { id: "fallback-11", name: "Vue.js", category: "Frontend", proficiency: 72 },
-    { id: "fallback-12", name: "MongoDB", category: "Backend", proficiency: 76 },
+    {
+      id: "fallback-11",
+      name: "Vue.js",
+      category: "Frontend",
+      proficiency: 72,
+    },
+    {
+      id: "fallback-12",
+      name: "MongoDB",
+      category: "Backend",
+      proficiency: 76,
+    },
   ];
 
   const [profile, setProfile] = useState(fallbackProfile);
@@ -72,7 +107,7 @@ export default function About() {
     [...fallbackSkills].sort((a, b) => {
       if (b.proficiency !== a.proficiency) return b.proficiency - a.proficiency;
       return a.name.localeCompare(b.name);
-    })
+    }),
   );
   const [experiences, setExperiences] = useState([]);
   const [education, setEducation] = useState([]);
@@ -92,14 +127,16 @@ export default function About() {
         if (profileRes.status === "fulfilled") {
           const data = profileRes.value.data;
           const normalizedProfile = data?.profile ?? data;
-          setProfile(normalizedProfile || fallbackProfile);
+          setProfile({ ...fallbackProfile, ...(normalizedProfile || {}) });
         }
 
         if (skillsRes.status === "fulfilled") {
           const data = skillsRes.value.data;
-          const fetchedSkills = Array.isArray(data) && data.length ? data : fallbackSkills;
+          const fetchedSkills =
+            Array.isArray(data) && data.length ? data : fallbackSkills;
           const sortedSkills = [...fetchedSkills].sort((a, b) => {
-            if (b.proficiency !== a.proficiency) return b.proficiency - a.proficiency;
+            if (b.proficiency !== a.proficiency)
+              return b.proficiency - a.proficiency;
             return a.name.localeCompare(b.name);
           });
           setSkills(sortedSkills);
@@ -262,8 +299,12 @@ export default function About() {
               <div className="prose prose-lg prose-invert max-w-none bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-xl">
                 <p className="text-gray-300 leading-relaxed text-lg font-light">
                   {language === "id"
-                    ? profile?.bio_id
-                    : profile?.bio || t("about.description")}
+                    ? profile?.bio_id ||
+                      fallbackProfile.bio_id ||
+                      t("about.description")
+                    : profile?.bio ||
+                      fallbackProfile.bio ||
+                      t("about.description")}
                 </p>
               </div>
             </div>
