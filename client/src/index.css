@@ -202,15 +202,16 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.4rem 1rem;
-  background: rgba(99, 102, 241, 0.12);
-  border: 1px solid rgba(99, 102, 241, 0.25);
+  background: rgba(99, 102, 241, 0.18);
+  border: 1px solid rgba(99, 102, 241, 0.35);
   border-radius: 9999px;
   width: fit-content;
   margin-bottom: 1.5rem;
   font-size: 0.875rem;
-  font-weight: 500;
-  color: #a78bfa;
-  backdrop-filter: blur(10px);
+  font-weight: 600;
+  color: #c4b5fd;
+  backdrop-filter: blur(12px);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
 }
 
 .hero-badge-dot {
@@ -241,7 +242,7 @@
 }
 
 .hero-title-gradient {
-  background: linear-gradient(135deg, #ffffff 0%, #c7d2fe 30%, #a78bfa 60%, #6366f1 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 30%, #c4b5fd 60%, #a78bfa 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -250,16 +251,22 @@
 .hero-subtitle {
   font-size: clamp(1.2rem, 2.5vw, 1.75rem);
   font-weight: 600;
-  color: rgba(167, 139, 250, 0.9);
+  color: #c4b5fd;
   margin-bottom: 1.25rem;
+  text-shadow:
+    0 0 30px rgba(139, 92, 246, 0.6),
+    0 2px 15px rgba(0, 0, 0, 0.7);
 }
 
 .hero-description {
   font-size: 1.1rem;
   line-height: 1.7;
-  color: rgba(203, 213, 225, 0.8);
+  color: rgba(226, 232, 240, 0.95);
   max-width: 520px;
   margin-bottom: 2rem;
+  text-shadow:
+    0 1px 10px rgba(0, 0, 0, 0.8),
+    0 0 20px rgba(0, 0, 0, 0.5);
 }
 
 /* Buttons */
