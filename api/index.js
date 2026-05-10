@@ -534,7 +534,7 @@ app.get("/api/seed", async (req, res) => {
         VALUES (
           'Filbert Matthew',
           'Full Stack Web Developer',
-          'Passionate web developer with expertise in modern web technologies. I love creating beautiful, functional, and user-friendly websites and applications.',
+          'Passionate Full Stack Developer building modern web apps with a focus on performance, clean UI, and reliable backends. Experienced in React, Node.js, and cloud deployment.',
           'filbertmathew63@gmail.com',
           'Indonesia',
           '{"github": "https://github.com/HotIce3/", "linkedin": "https://www.linkedin.com/in/fil-mat-b21958337/", "twitter": ""}'
@@ -609,7 +609,8 @@ app.get("/api/seed", async (req, res) => {
     }
 
     // Seed UMKM Growth Copilot if not exists
-    const existingUMKM = await sql`SELECT id FROM projects WHERE slug = 'umkm-growth-copilot'`;
+    const existingUMKM =
+      await sql`SELECT id FROM projects WHERE slug = 'umkm-growth-copilot'`;
     if (existingUMKM.length === 0) {
       await sql`
         INSERT INTO projects (

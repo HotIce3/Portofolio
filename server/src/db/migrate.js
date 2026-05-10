@@ -46,6 +46,27 @@ const migrate = async () => {
     `);
     console.log("✅ Profile table created");
 
+    // Ensure newer columns exist for existing databases
+    await client.query(`
+      ALTER TABLE profile
+      ADD COLUMN IF NOT EXISTS title VARCHAR(255),
+      ADD COLUMN IF NOT EXISTS bio TEXT,
+      ADD COLUMN IF NOT EXISTS bio_id TEXT,
+      ADD COLUMN IF NOT EXISTS email VARCHAR(255),
+      ADD COLUMN IF NOT EXISTS phone VARCHAR(50),
+      ADD COLUMN IF NOT EXISTS location VARCHAR(255),
+      ADD COLUMN IF NOT EXISTS avatar_url VARCHAR(500),
+      ADD COLUMN IF NOT EXISTS resume_url VARCHAR(500),
+      ADD COLUMN IF NOT EXISTS github_url VARCHAR(255),
+      ADD COLUMN IF NOT EXISTS linkedin_url VARCHAR(255),
+      ADD COLUMN IF NOT EXISTS twitter_url VARCHAR(255),
+      ADD COLUMN IF NOT EXISTS instagram_url VARCHAR(255),
+      ADD COLUMN IF NOT EXISTS website_url VARCHAR(255),
+      ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    `);
+    console.log("✅ Profile table updated");
+
     // Skills table
     await client.query(`
       CREATE TABLE IF NOT EXISTS skills (
@@ -59,6 +80,14 @@ const migrate = async () => {
       )
     `);
     console.log("✅ Skills table created");
+
+    await client.query(`
+      ALTER TABLE skills
+      ADD COLUMN IF NOT EXISTS icon VARCHAR(100),
+      ADD COLUMN IF NOT EXISTS sort_order INTEGER DEFAULT 0,
+      ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    `);
+    console.log("✅ Skills table updated");
 
     // Projects table
     await client.query(`
@@ -85,6 +114,25 @@ const migrate = async () => {
       )
     `);
     console.log("✅ Projects table created");
+
+    await client.query(`
+      ALTER TABLE projects
+      ADD COLUMN IF NOT EXISTS title_id VARCHAR(255),
+      ADD COLUMN IF NOT EXISTS description_id TEXT,
+      ADD COLUMN IF NOT EXISTS content_id TEXT,
+      ADD COLUMN IF NOT EXISTS thumbnail VARCHAR(500),
+      ADD COLUMN IF NOT EXISTS demo_url VARCHAR(500),
+      ADD COLUMN IF NOT EXISTS github_url VARCHAR(500),
+      ADD COLUMN IF NOT EXISTS tech_stack TEXT[],
+      ADD COLUMN IF NOT EXISTS category VARCHAR(100),
+      ADD COLUMN IF NOT EXISTS featured BOOLEAN DEFAULT false,
+      ADD COLUMN IF NOT EXISTS is_published BOOLEAN DEFAULT true,
+      ADD COLUMN IF NOT EXISTS sort_order INTEGER DEFAULT 0,
+      ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'published',
+      ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    `);
+    console.log("✅ Projects table updated");
 
     // Project images table
     await client.query(`
@@ -119,6 +167,20 @@ const migrate = async () => {
     `);
     console.log("✅ Experiences table created");
 
+    await client.query(`
+      ALTER TABLE experiences
+      ADD COLUMN IF NOT EXISTS position_id VARCHAR(255),
+      ADD COLUMN IF NOT EXISTS description_id TEXT,
+      ADD COLUMN IF NOT EXISTS location VARCHAR(255),
+      ADD COLUMN IF NOT EXISTS start_date DATE,
+      ADD COLUMN IF NOT EXISTS end_date DATE,
+      ADD COLUMN IF NOT EXISTS is_current BOOLEAN DEFAULT false,
+      ADD COLUMN IF NOT EXISTS company_logo VARCHAR(500),
+      ADD COLUMN IF NOT EXISTS sort_order INTEGER DEFAULT 0,
+      ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    `);
+    console.log("✅ Experiences table updated");
+
     // Education table
     await client.query(`
       CREATE TABLE IF NOT EXISTS education (
@@ -137,6 +199,18 @@ const migrate = async () => {
       )
     `);
     console.log("✅ Education table created");
+
+    await client.query(`
+      ALTER TABLE education
+      ADD COLUMN IF NOT EXISTS description_id TEXT,
+      ADD COLUMN IF NOT EXISTS start_date DATE,
+      ADD COLUMN IF NOT EXISTS end_date DATE,
+      ADD COLUMN IF NOT EXISTS is_current BOOLEAN DEFAULT false,
+      ADD COLUMN IF NOT EXISTS institution_logo VARCHAR(500),
+      ADD COLUMN IF NOT EXISTS sort_order INTEGER DEFAULT 0,
+      ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    `);
+    console.log("✅ Education table updated");
 
     // Contact messages table
     await client.query(`
@@ -170,6 +244,17 @@ const migrate = async () => {
     `);
     console.log("✅ Testimonials table created");
 
+    await client.query(`
+      ALTER TABLE testimonials
+      ADD COLUMN IF NOT EXISTS content_id TEXT,
+      ADD COLUMN IF NOT EXISTS avatar_url VARCHAR(500),
+      ADD COLUMN IF NOT EXISTS rating INTEGER DEFAULT 5,
+      ADD COLUMN IF NOT EXISTS is_visible BOOLEAN DEFAULT true,
+      ADD COLUMN IF NOT EXISTS sort_order INTEGER DEFAULT 0,
+      ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    `);
+    console.log("✅ Testimonials table updated");
+
     // Site settings table
     await client.query(`
       CREATE TABLE IF NOT EXISTS settings (
@@ -182,6 +267,14 @@ const migrate = async () => {
       )
     `);
     console.log("✅ Settings table created");
+
+    await client.query(`
+      ALTER TABLE settings
+      ADD COLUMN IF NOT EXISTS type VARCHAR(50) DEFAULT 'string',
+      ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    `);
+    console.log("✅ Settings table updated");
 
     await client.query("COMMIT");
     console.log("🎉 Database migration completed successfully!");

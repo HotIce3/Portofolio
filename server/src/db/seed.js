@@ -31,8 +31,8 @@ const seed = async () => {
       [
         "Filbert Matthew",
         "Full Stack Web Developer",
-        "Passionate web developer with expertise in building modern, responsive, and user-friendly web applications. I love turning ideas into reality through clean code and creative solutions.",
-        "Web developer yang passionate dalam membangun aplikasi web modern, responsif, dan user-friendly. Saya senang mengubah ide menjadi kenyataan melalui kode yang bersih dan solusi kreatif.",
+        "Passionate Full Stack Developer building modern web apps with a focus on performance, clean UI, and reliable backends. Experienced in React, Node.js, and cloud deployment.",
+        "Full Stack Developer yang bersemangat membangun aplikasi web modern dengan fokus pada performa, UI yang rapi, dan backend yang andal. Berpengalaman di React, Node.js, dan cloud deployment.",
         "filbertmathew63@gmail.com",
         "https://github.com/filbertmatthew",
         "https://linkedin.com/in/filbertmatthew",
@@ -41,6 +41,7 @@ const seed = async () => {
     console.log("✅ Profile created");
 
     // Add sample skills
+    const existingSkills = await client.query("SELECT id FROM skills LIMIT 1");
     const skills = [
       { name: "React", category: "Frontend", proficiency: 90, icon: "react" },
       {
@@ -91,17 +92,21 @@ const seed = async () => {
       { name: "Figma", category: "Design", proficiency: 75, icon: "figma" },
     ];
 
-    for (let i = 0; i < skills.length; i++) {
-      const skill = skills[i];
-      await client.query(
-        `
-        INSERT INTO skills (name, category, proficiency, icon, sort_order)
-        VALUES ($1, $2, $3, $4, $5)
-      `,
-        [skill.name, skill.category, skill.proficiency, skill.icon, i],
-      );
+    if (existingSkills.rows.length === 0) {
+      for (let i = 0; i < skills.length; i++) {
+        const skill = skills[i];
+        await client.query(
+          `
+          INSERT INTO skills (name, category, proficiency, icon, sort_order)
+          VALUES ($1, $2, $3, $4, $5)
+        `,
+          [skill.name, skill.category, skill.proficiency, skill.icon, i],
+        );
+      }
+      console.log("✅ Skills added");
+    } else {
+      console.log("ℹ️ Skills already exist, skipping");
     }
-    console.log("✅ Skills added");
 
     // Add sample projects
     const projects = [
@@ -109,11 +114,16 @@ const seed = async () => {
         title: "UMKM Growth Copilot AI",
         title_id: "UMKM Growth Copilot AI",
         slug: "umkm-growth-copilot",
-        description: "AI-powered business consulting platform for Indonesian SMEs. Powered by Groq LLM with realtime chat, promotional image generator, KPI Generator, Campaign Planner, Content Calendar AI, Break-Even Analyzer, and Loan Readiness Score.",
-        description_id: "Platform AI konsultasi bisnis untuk UMKM Indonesia. Chat realtime, generator gambar promosi, KPI Generator, Campaign Planner, Content Calendar AI, Break-Even Analyzer, dan Loan Readiness Score.",
-        content: "UMKM Growth Copilot is an AI assistant designed to help Indonesian Micro, Small, and Medium Enterprises (MSMEs) grow faster. The platform leverages Groq LLM to provide intelligent, context-aware real-time business consulting.\n\nKey Features:\n• Realtime AI chat + promotional image generator mode\n• Configurable persona, tone, language, sector & business scale context\n• Automatic local storage of consultation history\n• Export consultations to Markdown files\n• 6 ready-to-use prompt templates for various business needs\n• Session statistics & token usage estimation\n• KPI Generator & Campaign Planner\n• Content Calendar AI for content strategy\n• Break-Even Analyzer & Cashflow Alert\n• Product Bundling Recommender\n• Customer Persona Builder\n• Loan Readiness Score for capital loan preparation\n• Team Collaboration Workspace",
-        content_id: "UMKM Growth Copilot adalah asisten AI khusus untuk membantu UMKM Indonesia bertumbuh lebih cepat. Platform ini memanfaatkan Groq LLM untuk konsultasi bisnis realtime yang cerdas.\n\nFitur Utama:\n• Chat AI realtime + mode generator gambar promosi\n• Konteks persona, tone, bahasa, sektor & skala usaha\n• Penyimpanan riwayat konsultasi otomatis\n• Export ke Markdown\n• 6 template prompt siap pakai\n• KPI Generator & Campaign Planner\n• Content Calendar AI\n• Break-Even Analyzer & Cashflow Alert\n• Product Bundling Recommender\n• Customer Persona Builder\n• Loan Readiness Score\n• Team Collaboration Workspace",
-        thumbnail: "https://api.microlink.io/?url=https://umkm-growth-copilot.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
+        description:
+          "AI-powered business consulting platform for Indonesian SMEs. Powered by Groq LLM with realtime chat, promotional image generator, KPI Generator, Campaign Planner, Content Calendar AI, Break-Even Analyzer, and Loan Readiness Score.",
+        description_id:
+          "Platform AI konsultasi bisnis untuk UMKM Indonesia. Chat realtime, generator gambar promosi, KPI Generator, Campaign Planner, Content Calendar AI, Break-Even Analyzer, dan Loan Readiness Score.",
+        content:
+          "UMKM Growth Copilot is an AI assistant designed to help Indonesian Micro, Small, and Medium Enterprises (MSMEs) grow faster. The platform leverages Groq LLM to provide intelligent, context-aware real-time business consulting.\n\nKey Features:\n• Realtime AI chat + promotional image generator mode\n• Configurable persona, tone, language, sector & business scale context\n• Automatic local storage of consultation history\n• Export consultations to Markdown files\n• 6 ready-to-use prompt templates for various business needs\n• Session statistics & token usage estimation\n• KPI Generator & Campaign Planner\n• Content Calendar AI for content strategy\n• Break-Even Analyzer & Cashflow Alert\n• Product Bundling Recommender\n• Customer Persona Builder\n• Loan Readiness Score for capital loan preparation\n• Team Collaboration Workspace",
+        content_id:
+          "UMKM Growth Copilot adalah asisten AI khusus untuk membantu UMKM Indonesia bertumbuh lebih cepat. Platform ini memanfaatkan Groq LLM untuk konsultasi bisnis realtime yang cerdas.\n\nFitur Utama:\n• Chat AI realtime + mode generator gambar promosi\n• Konteks persona, tone, bahasa, sektor & skala usaha\n• Penyimpanan riwayat konsultasi otomatis\n• Export ke Markdown\n• 6 template prompt siap pakai\n• KPI Generator & Campaign Planner\n• Content Calendar AI\n• Break-Even Analyzer & Cashflow Alert\n• Product Bundling Recommender\n• Customer Persona Builder\n• Loan Readiness Score\n• Team Collaboration Workspace",
+        thumbnail:
+          "https://api.microlink.io/?url=https://umkm-growth-copilot.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
         demo_url: "https://umkm-growth-copilot.vercel.app/",
         github_url: "https://github.com/Filbert-Lab/UMKM-Growth-Copilot",
         tech_stack: ["Next.js", "Tailwind CSS", "Groq API", "Hugging Face"],
@@ -125,11 +135,16 @@ const seed = async () => {
         title: "Kopi Nusantara Brew",
         title_id: "Kopi Nusantara Brew",
         slug: "kopi-nusantara-brew",
-        description: "Website coffee shop premium dengan pengalaman kopi autentik Nusantara. Menampilkan menu, sistem pemesanan, dan desain elegan dengan tema kopi.",
-        description_id: "Website coffee shop premium dengan pengalaman kopi autentik Nusantara. Menampilkan menu, sistem pemesanan, dan desain elegan dengan tema kopi.",
-        content: "Kopi Nusantara Brew adalah website untuk coffee shop yang menawarkan pengalaman kopi premium dengan cita rasa autentik Nusantara. Website ini memiliki fitur menu interaktif, keranjang belanja, mode gelap/terang, dan desain responsif yang menawan.",
-        content_id: "Kopi Nusantara Brew adalah website untuk coffee shop yang menawarkan pengalaman kopi premium dengan cita rasa autentik Nusantara. Website ini memiliki fitur menu interaktif, keranjang belanja, mode gelap/terang, dan desain responsif yang menawan.",
-        thumbnail: "https://api.microlink.io/?url=https://website-portofolio-ivory-mu.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
+        description:
+          "Website coffee shop premium dengan pengalaman kopi autentik Nusantara. Menampilkan menu, sistem pemesanan, dan desain elegan dengan tema kopi.",
+        description_id:
+          "Website coffee shop premium dengan pengalaman kopi autentik Nusantara. Menampilkan menu, sistem pemesanan, dan desain elegan dengan tema kopi.",
+        content:
+          "Kopi Nusantara Brew adalah website untuk coffee shop yang menawarkan pengalaman kopi premium dengan cita rasa autentik Nusantara. Website ini memiliki fitur menu interaktif, keranjang belanja, mode gelap/terang, dan desain responsif yang menawan.",
+        content_id:
+          "Kopi Nusantara Brew adalah website untuk coffee shop yang menawarkan pengalaman kopi premium dengan cita rasa autentik Nusantara. Website ini memiliki fitur menu interaktif, keranjang belanja, mode gelap/terang, dan desain responsif yang menawan.",
+        thumbnail:
+          "https://api.microlink.io/?url=https://website-portofolio-ivory-mu.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
         demo_url: "https://website-portofolio-ivory-mu.vercel.app/",
         github_url: "https://website-portofolio-ivory-mu.vercel.app/",
         tech_stack: ["React", "Tailwind CSS", "Framer Motion", "Vite"],
@@ -145,9 +160,12 @@ const seed = async () => {
           "A smart financial planning app for tracking expenses, calculating remaining budget, and getting personalized investment recommendations.",
         description_id:
           "Aplikasi smart financial planning untuk melacak pengeluaran, menghitung sisa anggaran, dan mendapatkan rekomendasi investasi yang dipersonalisasi.",
-        content: "Financial Manage Dwivan is a comprehensive financial management application designed to help users track their expenses, manage budgets, and receive personalized investment recommendations. Built with modern web technologies for a seamless user experience.",
-        content_id: "Financial Manage Dwivan adalah aplikasi manajemen keuangan komprehensif yang dirancang untuk membantu pengguna melacak pengeluaran, mengelola anggaran, dan mendapatkan rekomendasi investasi yang dipersonalisasi. Dibangun dengan teknologi web modern untuk pengalaman pengguna yang seamless.",
-        thumbnail: "https://api.microlink.io/?url=https://financial-manage-dwivan.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
+        content:
+          "Financial Manage Dwivan is a comprehensive financial management application designed to help users track their expenses, manage budgets, and receive personalized investment recommendations. Built with modern web technologies for a seamless user experience.",
+        content_id:
+          "Financial Manage Dwivan adalah aplikasi manajemen keuangan komprehensif yang dirancang untuk membantu pengguna melacak pengeluaran, mengelola anggaran, dan mendapatkan rekomendasi investasi yang dipersonalisasi. Dibangun dengan teknologi web modern untuk pengalaman pengguna yang seamless.",
+        thumbnail:
+          "https://api.microlink.io/?url=https://financial-manage-dwivan.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
         demo_url: "https://financial-manage-dwivan.vercel.app",
         github_url: "https://github.com/HotIce3/financial-manage-dwivan",
         tech_stack: [
@@ -169,9 +187,12 @@ const seed = async () => {
           "A full-featured e-commerce platform with product management, shopping cart, payment integration, and admin dashboard.",
         description_id:
           "Platform e-commerce lengkap dengan manajemen produk, keranjang belanja, integrasi pembayaran, dan dashboard admin.",
-        content: "A comprehensive e-commerce solution built with modern technologies, featuring product catalog management, shopping cart functionality, secure payment processing, and an intuitive admin dashboard for inventory management.",
-        content_id: "Solusi e-commerce komprehensif yang dibangun dengan teknologi modern, menampilkan manajemen katalog produk, fungsionalitas keranjang belanja, pemrosesan pembayaran yang aman, dan dashboard admin yang intuitif untuk manajemen inventaris.",
-        thumbnail: "https://api.microlink.io/?url=https://ecommerce-demo.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
+        content:
+          "A comprehensive e-commerce solution built with modern technologies, featuring product catalog management, shopping cart functionality, secure payment processing, and an intuitive admin dashboard for inventory management.",
+        content_id:
+          "Solusi e-commerce komprehensif yang dibangun dengan teknologi modern, menampilkan manajemen katalog produk, fungsionalitas keranjang belanja, pemrosesan pembayaran yang aman, dan dashboard admin yang intuitif untuk manajemen inventaris.",
+        thumbnail:
+          "https://api.microlink.io/?url=https://ecommerce-demo.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
         demo_url: "https://ecommerce-demo.vercel.app",
         github_url: "https://github.com/HotIce3/ecommerce-platform",
         tech_stack: [
@@ -193,9 +214,12 @@ const seed = async () => {
           "A collaborative task management application with real-time updates, team features, and progress tracking.",
         description_id:
           "Aplikasi manajemen tugas kolaboratif dengan update real-time, fitur tim, dan pelacakan progres.",
-        content: "A powerful task management application designed for teams, featuring real-time collaboration, task assignment, progress tracking, and comprehensive project management tools.",
-        content_id: "Aplikasi manajemen tugas yang powerful yang dirancang untuk tim, menampilkan kolaborasi real-time, penugasan tugas, pelacakan progres, dan alat manajemen proyek yang komprehensif.",
-        thumbnail: "https://api.microlink.io/?url=https://task-app-demo.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
+        content:
+          "A powerful task management application designed for teams, featuring real-time collaboration, task assignment, progress tracking, and comprehensive project management tools.",
+        content_id:
+          "Aplikasi manajemen tugas yang powerful yang dirancang untuk tim, menampilkan kolaborasi real-time, penugasan tugas, pelacakan progres, dan alat manajemen proyek yang komprehensif.",
+        thumbnail:
+          "https://api.microlink.io/?url=https://task-app-demo.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
         demo_url: "https://task-app-demo.vercel.app",
         github_url: "https://github.com/HotIce3/task-management-app",
         tech_stack: ["Next.js", "TypeScript", "MongoDB", "Socket.io"],
@@ -211,6 +235,7 @@ const seed = async () => {
         `
         INSERT INTO projects (title, title_id, slug, description, description_id, content, content_id, thumbnail, demo_url, github_url, tech_stack, category, featured, is_published, sort_order)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+        ON CONFLICT (slug) DO NOTHING
       `,
         [
           p.title,
@@ -234,43 +259,57 @@ const seed = async () => {
     console.log("✅ Projects added");
 
     // Add sample experience
-    await client.query(
-      `
-      INSERT INTO experiences (company, position, position_id, description, description_id, location, start_date, is_current, sort_order)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-    `,
-      [
-        "Freelance",
-        "Full Stack Developer",
-        "Full Stack Developer",
-        "Building web applications for various clients using modern technologies like React, Node.js, and PostgreSQL.",
-        "Membangun aplikasi web untuk berbagai klien menggunakan teknologi modern seperti React, Node.js, dan PostgreSQL.",
-        "Remote",
-        "2023-01-01",
-        true,
-        0,
-      ],
+    const existingExperience = await client.query(
+      "SELECT id FROM experiences LIMIT 1",
     );
-    console.log("✅ Experience added");
+    if (existingExperience.rows.length === 0) {
+      await client.query(
+        `
+        INSERT INTO experiences (company, position, position_id, description, description_id, location, start_date, is_current, sort_order)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      `,
+        [
+          "Freelance",
+          "Full Stack Developer",
+          "Full Stack Developer",
+          "Building web applications for various clients using modern technologies like React, Node.js, and PostgreSQL.",
+          "Membangun aplikasi web untuk berbagai klien menggunakan teknologi modern seperti React, Node.js, dan PostgreSQL.",
+          "Remote",
+          "2023-01-01",
+          true,
+          0,
+        ],
+      );
+      console.log("✅ Experience added");
+    } else {
+      console.log("ℹ️ Experience already exists, skipping");
+    }
 
     // Add education
-    await client.query(
-      `
-      INSERT INTO education (institution, degree, field, description, description_id, start_date, is_current, sort_order)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-    `,
-      [
-        "University",
-        "Bachelor Degree",
-        "Computer Science",
-        "Studying computer science with focus on software engineering and web development.",
-        "Mempelajari ilmu komputer dengan fokus pada rekayasa perangkat lunak dan pengembangan web.",
-        "2020-09-01",
-        true,
-        0,
-      ],
+    const existingEducation = await client.query(
+      "SELECT id FROM education LIMIT 1",
     );
-    console.log("✅ Education added");
+    if (existingEducation.rows.length === 0) {
+      await client.query(
+        `
+        INSERT INTO education (institution, degree, field, description, description_id, start_date, is_current, sort_order)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      `,
+        [
+          "University",
+          "Bachelor Degree",
+          "Computer Science",
+          "Studying computer science with focus on software engineering and web development.",
+          "Mempelajari ilmu komputer dengan fokus pada rekayasa perangkat lunak dan pengembangan web.",
+          "2020-09-01",
+          true,
+          0,
+        ],
+      );
+      console.log("✅ Education added");
+    } else {
+      console.log("ℹ️ Education already exists, skipping");
+    }
 
     // Add site settings
     const settings = [
