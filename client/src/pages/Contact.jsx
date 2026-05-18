@@ -91,7 +91,7 @@ export default function Contact() {
             <p className="section-description">{t("contact.subtitle")}</p>
           </motion.div>
 
-          <div className="grid lg:grid-cols-5 gap-12 max-w-6xl mx-auto">
+          <div className="grid gap-8 lg:grid-cols-5 lg:gap-12 max-w-6xl mx-auto">
             {/* Contact Info */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -99,7 +99,7 @@ export default function Contact() {
               transition={{ delay: 0.1 }}
               className="lg:col-span-2"
             >
-              <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 sticky top-24 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+              <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 lg:sticky lg:top-24 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
                 <h2 className="text-xl font-semibold mb-6 text-white">
                   {t("contact.info")}
                 </h2>
@@ -158,7 +158,7 @@ export default function Contact() {
                     <h3 className="font-medium text-gray-300 mb-4">
                       {t("contact.followMe")}
                     </h3>
-                    <div className="flex gap-3">
+                    <div className="flex flex-wrap gap-3">
                       {socialLinks.map((social) => (
                         <a
                           key={social.label}
@@ -186,7 +186,7 @@ export default function Contact() {
             >
               <form
                 onSubmit={handleSubmit}
-                className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-[0_0_20px_rgba(0,0,0,0.5)]"
+                className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 shadow-[0_0_20px_rgba(0,0,0,0.5)]"
               >
                 <div className="grid md:grid-cols-2 gap-6 mb-6">
                   <div>

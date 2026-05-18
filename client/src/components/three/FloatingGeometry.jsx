@@ -228,21 +228,61 @@ function EnergyOrb({ position, scale = 1, color = "#60a5fa" }) {
   );
 }
 
-export default function FloatingGeometry() {
+export default function FloatingGeometry({ compact = false }) {
+  if (compact) {
+    return (
+      <group>
+        <GlassSphere
+          position={[2.8, 0.2, -2.2]}
+          scale={1.35}
+          color="#6366f1"
+          speed={0.6}
+        />
+        <EnergyOrb position={[-2.4, -1.3, -3.1]} scale={0.65} color="#60a5fa" />
+        <WobbleTorus
+          position={[2.3, -3.2, -5.2]}
+          scale={0.35}
+          color="#a78bfa"
+          speed={0.7}
+        />
+      </group>
+    );
+  }
+
   return (
     <group>
       {/* Main hero sphere - right side, large and prominent */}
-      <GlassSphere position={[3.8, 0.3, -2.5]} scale={2.0} color="#6366f1" speed={0.65} />
+      <GlassSphere
+        position={[3.8, 0.3, -2.5]}
+        scale={2.0}
+        color="#6366f1"
+        speed={0.65}
+      />
 
       {/* Supporting shapes with varied positions */}
-      <WobbleTorus position={[-4.5, 2.5, -5.5]} scale={0.85} color="#a78bfa" speed={0.5} />
+      <WobbleTorus
+        position={[-4.5, 2.5, -5.5]}
+        scale={0.85}
+        color="#a78bfa"
+        speed={0.5}
+      />
       <OctahedronGem position={[5.5, -2, -4.5]} scale={0.7} color="#34d399" />
       <EnergyOrb position={[-3.2, -1.5, -3.5]} scale={0.8} color="#60a5fa" />
 
       {/* Accent shapes */}
       <OctahedronGem position={[6.5, 3.5, -7]} scale={0.35} color="#f472b6" />
-      <GlassSphere position={[-6.5, -3, -6.5]} scale={0.45} color="#fbbf24" speed={0.6} />
-      <WobbleTorus position={[2, -4.5, -8]} scale={0.4} color="#f97316" speed={0.8} />
+      <GlassSphere
+        position={[-6.5, -3, -6.5]}
+        scale={0.45}
+        color="#fbbf24"
+        speed={0.6}
+      />
+      <WobbleTorus
+        position={[2, -4.5, -8]}
+        scale={0.4}
+        color="#f97316"
+        speed={0.8}
+      />
       <EnergyOrb position={[-2, 4, -6]} scale={0.5} color="#818cf8" />
     </group>
   );

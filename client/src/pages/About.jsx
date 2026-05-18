@@ -1,13 +1,19 @@
-import { useState, useEffect, Suspense, lazy } from "react";
+import { useState, useEffect, useRef, Suspense, lazy } from "react";
 import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence, useInView } from "framer-motion";
 import {
   FiDownload,
   FiMapPin,
   FiMail,
   FiBriefcase,
   FiBook,
+  FiCode,
+  FiGithub,
+  FiLinkedin,
+  FiUser,
+  FiAward,
+  FiCpu,
 } from "react-icons/fi";
 
 const SkillsScene = lazy(() => import("../components/three/SkillsScene"));
@@ -37,16 +43,83 @@ import { profileApi } from "../services/api";
 import { useLanguage } from "../contexts/LanguageContext";
 import LoadingSpinner from "../components/UI/LoadingSpinner";
 
+/* ── Animated counter hook ── */
+function useCounter(target, duration = 1500, start = false) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    if (!start) return;
+    let startTime = null;
+    const step = (timestamp) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      setCount(Math.floor(progress * target));
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [target, duration, start]);
+  return count;
+}
+
+/* ── Typing animation hook ── */
+function useTypingEffect(texts, speed = 80, pause = 1800) {
+  const [displayed, setDisplayed] = useState("");
+  const [textIdx, setTextIdx] = useState(0);
+  const [charIdx, setCharIdx] = useState(0);
+  const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    const current = texts[textIdx];
+    let timeout;
+    if (!deleting && charIdx < current.length) {
+      timeout = setTimeout(() => setCharIdx((c) => c + 1), speed);
+    } else if (!deleting && charIdx === current.length) {
+      timeout = setTimeout(() => setDeleting(true), pause);
+    } else if (deleting && charIdx > 0) {
+      timeout = setTimeout(() => setCharIdx((c) => c - 1), speed / 2);
+    } else if (deleting && charIdx === 0) {
+      setDeleting(false);
+      setTextIdx((i) => (i + 1) % texts.length);
+    }
+    setDisplayed(current.slice(0, charIdx));
+    return () => clearTimeout(timeout);
+  }, [charIdx, deleting, textIdx, texts, speed, pause]);
+
+  return displayed;
+}
+
+/* ── Stat card with animated counter ── */
+function StatCard({ icon: Icon, label, value, color, delay }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true });
+  const count = useCounter(value, 1200, inView);
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 20 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ delay }}
+      className="about-stat-card"
+      style={{ "--stat-color": color }}
+    >
+      <div className="about-stat-icon">
+        <Icon />
+      </div>
+      <div className="about-stat-value">{count}+</div>
+      <div className="about-stat-label">{label}</div>
+    </motion.div>
+  );
+}
+
 export default function About() {
   const { t } = useTranslation();
   const { language } = useLanguage();
-  // Fallback data so the About page still renders even if some backend endpoints fail
+
   const fallbackProfile = {
     name: "Filbert Matthew",
     title: "Web Developer",
-    bio: "Passionate web developer with expertise in building modern web applications",
+    bio: "Passionate web developer with expertise in building modern web applications. I love crafting clean, performant, and user-friendly digital experiences using the latest technologies.",
     bio_id:
-      "Web developer yang bersemangat dengan keahlian membangun aplikasi web modern",
+      "Web developer yang bersemangat dengan keahlian membangun aplikasi web modern. Saya suka membuat pengalaman digital yang bersih, performatif, dan ramah pengguna menggunakan teknologi terkini.",
     email: "filbertmathew63@gmail.com",
     github_url: "https://github.com/HotIce3/",
     linkedin_url: "https://www.linkedin.com/in/fil-mat-b21958337/",
@@ -102,16 +175,53 @@ export default function About() {
     },
   ];
 
+  const fallbackEducation = [
+    {
+      id: "current-s1-mikroskil",
+      institution: "Universitas Mikroskil",
+      degree: language === "id" ? "S1" : "Bachelor Degree",
+      field:
+        language === "id" ? "Teknik Informatika" : "Informatics Engineering",
+      location: "Medan, Sumatera Utara",
+      is_current: true,
+      description:
+        language === "id"
+          ? "Sedang menempuh pendidikan S1 Teknik Informatika di Mikroskil, Medan, Sumatera Utara."
+          : "Currently pursuing a Bachelor Degree in Informatics Engineering at Mikroskil, Medan, North Sumatra.",
+      description_id:
+        "Sedang menempuh pendidikan S1 Teknik Informatika di Mikroskil, Medan, Sumatera Utara.",
+    },
+  ];
+
   const [profile, setProfile] = useState(fallbackProfile);
   const [skills, setSkills] = useState(() =>
-    [...fallbackSkills].sort((a, b) => {
-      if (b.proficiency !== a.proficiency) return b.proficiency - a.proficiency;
-      return a.name.localeCompare(b.name);
-    }),
+    [...fallbackSkills].sort((a, b) =>
+      b.proficiency !== a.proficiency
+        ? b.proficiency - a.proficiency
+        : a.name.localeCompare(b.name),
+    ),
   );
   const [experiences, setExperiences] = useState([]);
-  const [education, setEducation] = useState([]);
+  const [education, setEducation] = useState(fallbackEducation);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("skills");
+  const [hoveredSkill, setHoveredSkill] = useState(null);
+
+  const typingTexts =
+    language === "id"
+      ? [
+          "Full Stack Developer",
+          "UI/UX Enthusiast",
+          "Problem Solver",
+          "Tech Explorer",
+        ]
+      : [
+          "Full Stack Developer",
+          "UI/UX Enthusiast",
+          "Problem Solver",
+          "Tech Explorer",
+        ];
+  const typedText = useTypingEffect(typingTexts);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -129,27 +239,25 @@ export default function About() {
           const normalizedProfile = data?.profile ?? data;
           setProfile({ ...fallbackProfile, ...(normalizedProfile || {}) });
         }
-
         if (skillsRes.status === "fulfilled") {
           const data = skillsRes.value.data;
           const fetchedSkills =
             Array.isArray(data) && data.length ? data : fallbackSkills;
-          const sortedSkills = [...fetchedSkills].sort((a, b) => {
-            if (b.proficiency !== a.proficiency)
-              return b.proficiency - a.proficiency;
-            return a.name.localeCompare(b.name);
-          });
-          setSkills(sortedSkills);
+          setSkills(
+            [...fetchedSkills].sort((a, b) =>
+              b.proficiency !== a.proficiency
+                ? b.proficiency - a.proficiency
+                : a.name.localeCompare(b.name),
+            ),
+          );
         }
-
-        if (expRes.status === "fulfilled") {
-          const data = expRes.value.data;
-          setExperiences(Array.isArray(data) ? data : []);
-        }
-
+        // Work experience is intentionally empty until real experience is added.
+        setExperiences([]);
         if (eduRes.status === "fulfilled") {
           const data = eduRes.value.data;
-          setEducation(Array.isArray(data) ? data : []);
+          setEducation(
+            Array.isArray(data) && data.length ? data : fallbackEducation,
+          );
         }
       } catch (error) {
         console.error("Failed to fetch data:", error);
@@ -160,15 +268,12 @@ export default function About() {
     fetchData();
   }, []);
 
-  if (loading) {
-    return <LoadingSpinner fullScreen />;
-  }
+  if (loading) return <LoadingSpinner fullScreen />;
 
-  // Group skills by category
   const skillsByCategory = skills.reduce((acc, skill) => {
-    const category = skill.category || "Other";
-    if (!acc[category]) acc[category] = [];
-    acc[category].push(skill);
+    const cat = skill.category || "Other";
+    if (!acc[cat]) acc[cat] = [];
+    acc[cat].push(skill);
     return acc;
   }, {});
 
@@ -180,9 +285,9 @@ export default function About() {
     HTML5: { icon: SiHtml5, color: "#E34F26" },
     CSS3: { icon: SiCss3, color: "#1572B6" },
     "Tailwind CSS": { icon: SiTailwindcss, color: "#06B6D4" },
-    "Next.js": { icon: SiNextdotjs, color: "#000000" },
+    "Next.js": { icon: SiNextdotjs, color: "#ffffff" },
     "Node.js": { icon: SiNodedotjs, color: "#339933" },
-    "Express.js": { icon: SiExpress, color: "#000000" },
+    "Express.js": { icon: SiExpress, color: "#ffffff" },
     PostgreSQL: { icon: SiPostgresql, color: "#4169E1" },
     MongoDB: { icon: SiMongodb, color: "#47A248" },
     Python: { icon: SiPython, color: "#3776AB" },
@@ -191,17 +296,49 @@ export default function About() {
     Docker: { icon: SiDocker, color: "#2496ED" },
     "VS Code": { icon: SiVisualstudiocode, color: "#007ACC" },
     Figma: { icon: SiFigma, color: "#F24E1E" },
-    Vercel: { icon: SiVercel, color: "#000000" },
-    GitHub: { icon: SiGithub, color: "#181717" },
+    Vercel: { icon: SiVercel, color: "#ffffff" },
+    GitHub: { icon: SiGithub, color: "#ffffff" },
   };
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "";
-    const date = new Date(dateStr);
-    return date.toLocaleDateString(language === "id" ? "id-ID" : "en-US", {
-      month: "short",
-      year: "numeric",
-    });
+    return new Date(dateStr).toLocaleDateString(
+      language === "id" ? "id-ID" : "en-US",
+      { month: "short", year: "numeric" },
+    );
+  };
+
+  const tabs = [
+    {
+      id: "skills",
+      label: language === "id" ? "Keahlian" : "Skills",
+      icon: FiCpu,
+    },
+    ...(experiences.length > 0
+      ? [
+          {
+            id: "experience",
+            label: language === "id" ? "Pengalaman" : "Experience",
+            icon: FiBriefcase,
+          },
+        ]
+      : []),
+    ...(education.length > 0
+      ? [
+          {
+            id: "education",
+            label: language === "id" ? "Pendidikan" : "Education",
+            icon: FiBook,
+          },
+        ]
+      : []),
+  ];
+
+  const categoryColors = {
+    Frontend: { from: "#6366f1", to: "#a78bfa", text: "#c4b5fd" },
+    Backend: { from: "#10b981", to: "#34d399", text: "#6ee7b7" },
+    Tools: { from: "#f59e0b", to: "#fbbf24", text: "#fde68a" },
+    Other: { from: "#ec4899", to: "#f472b6", text: "#fbcfe8" },
   };
 
   return (
@@ -210,35 +347,37 @@ export default function About() {
         <title>{t("about.title")} - Filbert Matthew</title>
       </Helmet>
 
-      <section className="skills-3d-section min-h-screen relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a1a] via-[#13111c] to-[#0a0a1a] pointer-events-none z-0"></div>
-        <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-primary-600/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-violet-600/10 rounded-full blur-[100px] pointer-events-none z-0"></div>
+      <section className="about-page-section">
+        {/* Background blobs */}
+        <div className="about-bg-blob about-bg-blob--tl" />
+        <div className="about-bg-blob about-bg-blob--br" />
+        <div className="about-bg-grid" />
 
         <div className="container-custom relative z-10">
-          {/* Header */}
+          {/* ── Page header ── */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            className="section-header"
+            className="section-header pt-8"
           >
             <span className="section-tag">{t("nav.about")}</span>
-            <h2 className="section-title">{t("about.title")}</h2>
+            <h1 className="section-title">{t("about.title")}</h1>
             <p className="section-description">{t("about.subtitle")}</p>
           </motion.div>
 
-          {/* Profile Section */}
+          {/* ── Hero profile block ── */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="grid lg:grid-cols-3 gap-12 mb-20"
+            className="about-hero-grid"
           >
-            {/* Avatar & Info */}
-            <div className="lg:col-span-1">
-              <div className="sticky top-24">
-                <div className="w-48 h-48 mx-auto lg:mx-0 rounded-2xl bg-gradient-to-br from-primary-600/40 to-violet-600/40 p-[2px] flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(99,102,241,0.2)]">
-                  <div className="w-full h-full bg-[#0a0a1a] rounded-2xl overflow-hidden flex items-center justify-center">
+            {/* Left – avatar card */}
+            <div className="about-avatar-col">
+              <div className="about-avatar-card">
+                {/* Glow ring */}
+                <div className="about-avatar-ring">
+                  <div className="about-avatar-inner">
                     {profile?.avatar_url ? (
                       <img
                         src={profile.avatar_url}
@@ -246,33 +385,43 @@ export default function About() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <span className="text-6xl font-bold text-white/50">
-                        FM
-                      </span>
+                      <span className="about-avatar-initials">FM</span>
                     )}
                   </div>
                 </div>
 
-                <h2 className="text-2xl font-bold text-center lg:text-left mb-2 text-white">
+                {/* Online badge */}
+                <div className="about-online-badge">
+                  <span className="about-online-dot" />
+                  {language === "id"
+                    ? "Tersedia untuk kerja"
+                    : "Available for work"}
+                </div>
+
+                <h2 className="about-profile-name">
                   {profile?.name || "Filbert Matthew"}
                 </h2>
-                <p className="text-primary-400 font-medium text-center lg:text-left mb-4">
-                  {profile?.title || "Web Developer"}
+
+                {/* Typing title */}
+                <p className="about-profile-typing">
+                  <span>{typedText}</span>
+                  <span className="about-cursor">|</span>
                 </p>
 
-                <div className="space-y-3 text-gray-400">
+                {/* Contact info */}
+                <div className="about-contact-list">
                   {profile?.location && (
-                    <div className="flex items-center gap-2 justify-center lg:justify-start">
-                      <FiMapPin className="w-4 h-4 text-primary-400" />
+                    <div className="about-contact-item">
+                      <FiMapPin className="about-contact-icon" />
                       <span>{profile.location}</span>
                     </div>
                   )}
                   {profile?.email && (
-                    <div className="flex items-center gap-2 justify-center lg:justify-start">
-                      <FiMail className="w-4 h-4 text-primary-400" />
+                    <div className="about-contact-item">
+                      <FiMail className="about-contact-icon" />
                       <a
                         href={`mailto:${profile.email}`}
-                        className="hover:text-primary-300 transition-colors"
+                        className="about-contact-link"
                       >
                         {profile.email}
                       </a>
@@ -280,196 +429,317 @@ export default function About() {
                   )}
                 </div>
 
+                {/* Social links */}
+                <div className="about-socials">
+                  {profile?.github_url && (
+                    <a
+                      href={profile.github_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="about-social-btn"
+                      aria-label="GitHub"
+                    >
+                      <FiGithub />
+                    </a>
+                  )}
+                  {profile?.linkedin_url && (
+                    <a
+                      href={profile.linkedin_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="about-social-btn"
+                      aria-label="LinkedIn"
+                    >
+                      <FiLinkedin />
+                    </a>
+                  )}
+                  {profile?.email && (
+                    <a
+                      href={`mailto:${profile.email}`}
+                      className="about-social-btn"
+                      aria-label="Email"
+                    >
+                      <FiMail />
+                    </a>
+                  )}
+                </div>
+
+                {/* CV button */}
                 {profile?.resume_url && (
                   <a
                     href={profile.resume_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center w-full mt-6 px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-medium rounded-xl border border-white/10 transition-all duration-300 backdrop-blur-md shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:shadow-[0_0_25px_rgba(255,255,255,0.2)]"
+                    className="about-cv-btn"
                   >
-                    <FiDownload className="mr-2" />
+                    <FiDownload />
                     {t("about.downloadCV")}
                   </a>
                 )}
               </div>
             </div>
 
-            {/* Bio */}
-            <div className="lg:col-span-2">
-              <div className="prose prose-lg prose-invert max-w-none bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-xl">
-                <p className="text-gray-300 leading-relaxed text-lg font-light">
+            {/* Right – bio + stats */}
+            <div className="about-bio-col">
+              {/* Bio card */}
+              <div className="about-bio-card">
+                <div className="about-bio-header">
+                  <FiUser className="about-bio-icon" />
+                  <span>{language === "id" ? "Tentang Saya" : "About Me"}</span>
+                </div>
+                <p className="about-bio-text">
                   {language === "id"
-                    ? profile?.bio_id ||
-                      fallbackProfile.bio_id ||
-                      t("about.description")
-                    : profile?.bio ||
-                      fallbackProfile.bio ||
-                      t("about.description")}
+                    ? profile?.bio_id || fallbackProfile.bio_id
+                    : profile?.bio || fallbackProfile.bio}
                 </p>
               </div>
+
+              {/* Stats row */}
+              <div className="about-stats-grid">
+                <StatCard
+                  icon={FiCode}
+                  label={language === "id" ? "Proyek Selesai" : "Projects Done"}
+                  value={3}
+                  color="#6366f1"
+                  delay={0.2}
+                />
+                <StatCard
+                  icon={FiAward}
+                  label={language === "id" ? "Teknologi" : "Technologies"}
+                  value={skills.length}
+                  color="#a78bfa"
+                  delay={0.3}
+                />
+                <StatCard
+                  icon={FiBriefcase}
+                  label={language === "id" ? "Tahun Coding" : "Years Coding"}
+                  value={3}
+                  color="#34d399"
+                  delay={0.4}
+                />
+              </div>
+
+              {/* 3D Skills constellation */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.97 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7 }}
+                className="skills-3d-container mt-6"
+              >
+                <Suspense
+                  fallback={<div className="skills-loading">Loading 3D...</div>}
+                >
+                  <SkillsScene />
+                </Suspense>
+              </motion.div>
             </div>
           </motion.div>
 
-          {/* Skills Section */}
+          {/* ── Tab navigation ── */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mb-20 relative"
+            className="about-tabs-wrapper"
           >
-            <h2 className="heading-2 mb-8 text-center text-white">
-              {t("about.skills")}
-            </h2>
-
-            {/* 3D Skills Constellation (same as Home) */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="skills-3d-container"
-            >
-              <Suspense
-                fallback={<div className="skills-loading">Loading 3D...</div>}
-              >
-                <SkillsScene />
-              </Suspense>
-            </motion.div>
-
-            {/* Skill badges (same style as Home) */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="skills-badge-grid mb-10"
-            >
-              {skills.slice(0, 12).map((skill) => {
-                const skillData = skillIcons[skill.name];
-                const IconComponent = skillData?.icon;
-
-                return (
-                  <div
-                    key={skill.id}
-                    className="skill-badge-3d"
-                    style={{ "--skill-color": skillData?.color || "#6366f1" }}
-                  >
-                    {IconComponent && (
-                      <IconComponent
-                        className="skill-badge-icon"
-                        style={{ color: skillData?.color }}
-                      />
-                    )}
-                    <span className="skill-badge-name">{skill.name}</span>
-                    {typeof skill.proficiency === "number" && (
-                      <span className="skill-badge-level">
-                        {skill.proficiency}%
-                      </span>
-                    )}
-                  </div>
-                );
-              })}
-            </motion.div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {Object.entries(skillsByCategory).map(
-                ([category, categorySkills], index) => (
-                  <motion.div
-                    key={category}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: index * 0.1 }}
-                    className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-xl relative overflow-hidden group hover:border-primary-500/30 transition-colors"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <h3 className="font-semibold text-lg mb-4 text-primary-400 relative z-10">
-                      {category}
-                    </h3>
-                    <div className="space-y-3 relative z-10">
-                      {categorySkills.map((skill) => {
-                        const skillData = skillIcons[skill.name];
-                        const IconComponent = skillData?.icon;
-
-                        return (
-                          <div key={skill.id}>
-                            <div className="flex justify-between mb-1">
-                              <span className="font-medium text-gray-200 flex items-center gap-2">
-                                {IconComponent && (
-                                  <IconComponent
-                                    className="w-4 h-4 drop-shadow-md"
-                                    style={{ color: skillData.color }}
-                                  />
-                                )}
-                                {skill.name}
-                              </span>
-                              <span className="text-sm text-gray-400 font-mono">
-                                {skill.proficiency}%
-                              </span>
-                            </div>
-                            <div className="h-2 bg-white/10 rounded-full overflow-hidden backdrop-blur-sm border border-white/5">
-                              <motion.div
-                                className="h-full bg-gradient-to-r from-primary-500 to-violet-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]"
-                                initial={{ width: 0 }}
-                                whileInView={{ width: `${skill.proficiency}%` }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 1, ease: "easeOut" }}
-                              />
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </motion.div>
-                ),
-              )}
+            <div className="about-tabs">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`about-tab-btn ${activeTab === tab.id ? "about-tab-btn--active" : ""}`}
+                >
+                  <tab.icon className="about-tab-icon" />
+                  {tab.label}
+                  {activeTab === tab.id && (
+                    <motion.div
+                      layoutId="tab-indicator"
+                      className="about-tab-indicator"
+                    />
+                  )}
+                </button>
+              ))}
             </div>
           </motion.div>
 
-          {/* Experience Section */}
-          {experiences.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="mb-20"
-            >
-              <h2 className="heading-2 mb-8 text-center flex items-center justify-center gap-3">
-                <FiBriefcase className="text-primary-600 dark:text-primary-400" />
-                {t("about.experience")}
-              </h2>
+          {/* ── Tab content ── */}
+          <AnimatePresence mode="wait">
+            {/* SKILLS TAB */}
+            {activeTab === "skills" && (
+              <motion.div
+                key="skills"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.35 }}
+              >
+                {/* Skill badges */}
+                <div className="skills-badge-grid mb-10">
+                  {skills.slice(0, 12).map((skill) => {
+                    const sd = skillIcons[skill.name];
+                    const Icon = sd?.icon;
+                    return (
+                      <motion.div
+                        key={skill.id}
+                        className="skill-badge-3d"
+                        style={{ "--skill-color": sd?.color || "#6366f1" }}
+                        whileHover={{ scale: 1.08 }}
+                        onHoverStart={() => setHoveredSkill(skill.id)}
+                        onHoverEnd={() => setHoveredSkill(null)}
+                      >
+                        {Icon && (
+                          <Icon
+                            className="skill-badge-icon"
+                            style={{ color: sd?.color }}
+                          />
+                        )}
+                        <span className="skill-badge-name">{skill.name}</span>
+                        {typeof skill.proficiency === "number" && (
+                          <span className="skill-badge-level">
+                            {skill.proficiency}%
+                          </span>
+                        )}
+                      </motion.div>
+                    );
+                  })}
+                </div>
 
-              <div className="max-w-3xl mx-auto">
+                {/* Category cards */}
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {Object.entries(skillsByCategory).map(
+                    ([category, catSkills], index) => {
+                      const colors =
+                        categoryColors[category] || categoryColors.Other;
+                      return (
+                        <motion.div
+                          key={category}
+                          initial={{ opacity: 0, y: 24 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: index * 0.08 }}
+                          className="about-skill-category-card"
+                          style={{
+                            "--cat-from": colors.from,
+                            "--cat-to": colors.to,
+                            "--cat-text": colors.text,
+                          }}
+                        >
+                          <div className="about-skill-category-header">
+                            <span
+                              className="about-skill-category-dot"
+                              style={{
+                                background: `linear-gradient(135deg, ${colors.from}, ${colors.to})`,
+                              }}
+                            />
+                            <h3 className="about-skill-category-title">
+                              {category}
+                            </h3>
+                            <span className="about-skill-category-count">
+                              {catSkills.length}
+                            </span>
+                          </div>
+
+                          <div className="space-y-3">
+                            {catSkills.map((skill) => {
+                              const sd = skillIcons[skill.name];
+                              const Icon = sd?.icon;
+                              return (
+                                <div key={skill.id} className="about-skill-row">
+                                  <div className="about-skill-row-label">
+                                    {Icon && (
+                                      <Icon
+                                        className="w-4 h-4 flex-shrink-0"
+                                        style={{ color: sd.color }}
+                                      />
+                                    )}
+                                    <span className="text-gray-200 font-medium text-sm">
+                                      {skill.name}
+                                    </span>
+                                  </div>
+                                  <div className="about-skill-bar-wrap">
+                                    <div className="about-skill-bar-track">
+                                      <motion.div
+                                        className="about-skill-bar-fill"
+                                        style={{
+                                          background: `linear-gradient(90deg, ${colors.from}, ${colors.to})`,
+                                        }}
+                                        initial={{ width: 0 }}
+                                        whileInView={{
+                                          width: `${skill.proficiency}%`,
+                                        }}
+                                        viewport={{ once: true }}
+                                        transition={{
+                                          duration: 1,
+                                          ease: "easeOut",
+                                          delay: 0.1,
+                                        }}
+                                      />
+                                    </div>
+                                    <span className="about-skill-pct">
+                                      {skill.proficiency}%
+                                    </span>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </motion.div>
+                      );
+                    },
+                  )}
+                </div>
+              </motion.div>
+            )}
+
+            {/* EXPERIENCE TAB */}
+            {activeTab === "experience" && (
+              <motion.div
+                key="experience"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.35 }}
+                className="max-w-3xl mx-auto"
+              >
                 {experiences.map((exp, index) => (
                   <motion.div
                     key={exp.id}
-                    initial={{ opacity: 0, x: -20 }}
+                    initial={{ opacity: 0, x: -24 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1 }}
-                    className="relative pl-8 pb-8 border-l-2 border-primary-200 dark:border-primary-800 last:pb-0"
+                    className="about-timeline-item"
                   >
-                    <div className="absolute left-[-9px] top-0 w-4 h-4 bg-primary-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.8)] border-2 border-[#0a0a1a]" />
-
-                    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-xl relative overflow-hidden group hover:border-primary-500/30 transition-colors">
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div className="about-timeline-line" />
+                    <div className="about-timeline-dot">
+                      <FiBriefcase className="w-3 h-3" />
+                    </div>
+                    <div className="about-timeline-card group">
+                      <div className="about-timeline-card-glow" />
                       <div className="flex flex-wrap items-start justify-between gap-2 mb-2 relative z-10">
-                        <h3 className="text-xl font-semibold text-white">
+                        <h3 className="text-lg font-bold text-white">
                           {language === "id"
                             ? exp.position_id || exp.position
                             : exp.position}
                         </h3>
-                        <span className="text-sm text-gray-400 font-mono bg-white/5 px-2 py-1 rounded border border-white/10">
-                          {formatDate(exp.start_date)} -{" "}
+                        <span className="about-timeline-date">
+                          {formatDate(exp.start_date)} –{" "}
                           {exp.is_current
                             ? t("about.present")
                             : formatDate(exp.end_date)}
                         </span>
                       </div>
-                      <p className="text-primary-400 font-medium mb-2 relative z-10">
-                        {exp.company} {exp.location && `• ${exp.location}`}
+                      <p className="text-primary-400 font-semibold mb-2 relative z-10 text-sm">
+                        {exp.company}
+                        {exp.location && (
+                          <span className="text-gray-500">
+                            {" "}
+                            · {exp.location}
+                          </span>
+                        )}
                       </p>
-                      <p className="text-gray-300 relative z-10">
+                      <p className="text-gray-400 text-sm leading-relaxed relative z-10">
                         {language === "id"
                           ? exp.description_id || exp.description
                           : exp.description}
@@ -477,52 +747,53 @@ export default function About() {
                     </div>
                   </motion.div>
                 ))}
-              </div>
-            </motion.div>
-          )}
+              </motion.div>
+            )}
 
-          {/* Education Section */}
-          {education.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="heading-2 mb-8 text-center flex items-center justify-center gap-3">
-                <FiBook className="text-primary-600 dark:text-primary-400" />
-                {t("about.education")}
-              </h2>
-
-              <div className="max-w-3xl mx-auto">
+            {/* EDUCATION TAB */}
+            {activeTab === "education" && (
+              <motion.div
+                key="education"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.35 }}
+                className="max-w-3xl mx-auto"
+              >
                 {education.map((edu, index) => (
                   <motion.div
                     key={edu.id}
-                    initial={{ opacity: 0, x: -20 }}
+                    initial={{ opacity: 0, x: -24 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1 }}
-                    className="relative pl-8 pb-8 border-l-2 border-primary-200 dark:border-primary-800 last:pb-0"
+                    className="about-timeline-item"
                   >
-                    <div className="absolute left-[-9px] top-0 w-4 h-4 bg-primary-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.8)] border-2 border-[#0a0a1a]" />
-
-                    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-xl relative overflow-hidden group hover:border-violet-500/30 transition-colors">
-                      <div className="absolute inset-0 bg-gradient-to-br from-violet-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div className="about-timeline-line about-timeline-line--edu" />
+                    <div className="about-timeline-dot about-timeline-dot--edu">
+                      <FiBook className="w-3 h-3" />
+                    </div>
+                    <div className="about-timeline-card group">
+                      <div className="about-timeline-card-glow about-timeline-card-glow--edu" />
                       <div className="flex flex-wrap items-start justify-between gap-2 mb-2 relative z-10">
-                        <h3 className="text-xl font-semibold text-white">
+                        <h3 className="text-lg font-bold text-white">
                           {edu.institution}
                         </h3>
-                        <span className="text-sm text-gray-400 font-mono bg-white/5 px-2 py-1 rounded border border-white/10">
-                          {formatDate(edu.start_date)} -{" "}
+                        <span className="about-timeline-date">
+                          {formatDate(edu.start_date)} –{" "}
                           {edu.is_current
                             ? t("about.present")
                             : formatDate(edu.end_date)}
                         </span>
                       </div>
-                      <p className="text-violet-400 font-medium mb-2 relative z-10">
-                        {edu.degree} {edu.field && `in ${edu.field}`}
+                      <p className="text-violet-400 font-semibold mb-2 relative z-10 text-sm">
+                        {edu.degree}
+                        {edu.field && (
+                          <span className="text-gray-500"> · {edu.field}</span>
+                        )}
                       </p>
                       {edu.description && (
-                        <p className="text-gray-300 relative z-10">
+                        <p className="text-gray-400 text-sm leading-relaxed relative z-10">
                           {language === "id"
                             ? edu.description_id || edu.description
                             : edu.description}
@@ -531,9 +802,9 @@ export default function About() {
                     </div>
                   </motion.div>
                 ))}
-              </div>
-            </motion.div>
-          )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </section>
     </>

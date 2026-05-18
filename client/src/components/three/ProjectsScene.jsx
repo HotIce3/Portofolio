@@ -2,10 +2,11 @@ import { useRef, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, MeshDistortMaterial, Stars } from "@react-three/drei";
 import { Suspense } from "react";
+import { useSceneQuality } from "./useSceneQuality";
 import * as THREE from "three";
 
 // Holographic project card
-function HoloCard({ position, color, delay = 0, index }) {
+function HoloCard({ position, color, delay = 0, compact = false }) {
   const meshRef = useRef();
   const edgeRef = useRef();
   const glowRef = useRef();
@@ -20,12 +21,17 @@ function HoloCard({ position, color, delay = 0, index }) {
       edgeRef.current.material.opacity = 0.3 + Math.sin(t * 1.5 + delay) * 0.15;
     }
     if (glowRef.current) {
-      glowRef.current.material.opacity = 0.06 + Math.sin(t * 1.2 + delay) * 0.04;
+      glowRef.current.material.opacity =
+        0.06 + Math.sin(t * 1.2 + delay) * 0.04;
     }
   });
 
   return (
-    <Float speed={1.4} rotationIntensity={0.25} floatIntensity={0.6}>
+    <Float
+      speed={compact ? 0.9 : 1.4}
+      rotationIntensity={compact ? 0.12 : 0.25}
+      floatIntensity={compact ? 0.28 : 0.6}
+    >
       <group position={position}>
         {/* Card body */}
         <mesh ref={meshRef}>
@@ -91,7 +97,7 @@ function HoloCard({ position, color, delay = 0, index }) {
 }
 
 // Central morphing energy sphere
-function CentralOrb() {
+function CentralOrb({ compact = false }) {
   const meshRef = useRef();
   const outerRef = useRef();
   const ringRefs = useRef([]);
@@ -118,7 +124,11 @@ function CentralOrb() {
   const ringColors = ["#6366f1", "#a78bfa", "#60a5fa"];
 
   return (
-    <Float speed={2.2} rotationIntensity={0.4} floatIntensity={1.2}>
+    <Float
+      speed={compact ? 1.4 : 2.2}
+      rotationIntensity={compact ? 0.2 : 0.4}
+      floatIntensity={compact ? 0.7 : 1.2}
+    >
       <group>
         {/* Core morphing orb */}
         <mesh ref={meshRef}>
@@ -163,17 +173,21 @@ function CentralOrb() {
             />
           </mesh>
         ))}
-        <pointLight position={[0, 0, 0]} intensity={1.2} color="#6366f1" distance={8} />
+        <pointLight
+          position={[0, 0, 0]}
+          intensity={1.2}
+          color="#6366f1"
+          distance={8}
+        />
       </group>
     </Float>
   );
 }
 
 // Floating data particles
-function DataParticles() {
+function DataParticles({ count = 300, compact = false }) {
   const ref = useRef();
   const { positions, colors } = useMemo(() => {
-    const count = 300;
     const pos = new Float32Array(count * 3);
     const col = new Float32Array(count * 3);
     const palette = [
@@ -211,10 +225,10 @@ function DataParticles() {
   return (
     <points ref={ref} geometry={geo}>
       <pointsMaterial
-        size={0.05}
+        size={compact ? 0.04 : 0.05}
         vertexColors
         transparent
-        opacity={0.6}
+        opacity={compact ? 0.5 : 0.6}
         blending={THREE.AdditiveBlending}
         depthWrite={false}
         sizeAttenuation
@@ -224,12 +238,19 @@ function DataParticles() {
 }
 
 export default function ProjectsScene() {
+  const { canvasDpr, isLowPower } = useSceneQuality();
+  const starsCount = isLowPower ? 180 : 600;
+  const particleCount = isLowPower ? 140 : 300;
+
   return (
     <div style={{ width: "100%", height: "100%" }}>
       <Canvas
-        camera={{ position: [0, 0, 7], fov: 46 }}
-        dpr={[1, 1.5]}
-        gl={{ antialias: true, alpha: true }}
+        camera={{
+          position: isLowPower ? [0, 0, 6.5] : [0, 0, 7],
+          fov: isLowPower ? 50 : 46,
+        }}
+        dpr={canvasDpr}
+        gl={{ antialias: !isLowPower, alpha: true }}
         style={{ background: "transparent" }}
       >
         <Suspense fallback={null}>
@@ -238,14 +259,37 @@ export default function ProjectsScene() {
           <pointLight position={[-5, -4, 4]} intensity={0.5} color="#a78bfa" />
           <pointLight position={[0, 3, -3]} intensity={0.4} color="#60a5fa" />
 
-          <Stars radius={60} depth={30} count={600} factor={3} saturation={0.3} fade speed={0.2} />
+          <Stars
+            radius={isLowPower ? 46 : 60}
+            depth={isLowPower ? 18 : 30}
+            count={starsCount}
+            factor={isLowPower ? 2 : 3}
+            saturation={0.3}
+            fade
+            speed={isLowPower ? 0.12 : 0.2}
+          />
 
-          <CentralOrb />
-          <DataParticles />
+          <CentralOrb compact={isLowPower} />
+          <DataParticles count={particleCount} compact={isLowPower} />
 
-          <HoloCard position={[-3.2, 0.6, -1.5]} color="#6366f1" delay={0} index={0} />
-          <HoloCard position={[3.2, -0.4, -1.5]} color="#a78bfa" delay={1.2} index={1} />
-          <HoloCard position={[0, -1.2, -2.5]} color="#60a5fa" delay={2.4} index={2} />
+          <HoloCard
+            position={[-3.2, 0.6, -1.5]}
+            color="#6366f1"
+            delay={0}
+            compact={isLowPower}
+          />
+          <HoloCard
+            position={[3.2, -0.4, -1.5]}
+            color="#a78bfa"
+            delay={1.2}
+            compact={isLowPower}
+          />
+          <HoloCard
+            position={[0, -1.2, -2.5]}
+            color="#60a5fa"
+            delay={2.4}
+            compact={isLowPower}
+          />
         </Suspense>
       </Canvas>
     </div>

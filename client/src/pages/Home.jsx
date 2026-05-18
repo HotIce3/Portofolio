@@ -51,6 +51,11 @@ const fadeUp = {
   }),
 };
 
+const hiddenProjectSlugs = new Set([
+  "e-commerce-platform",
+  "task-management-app",
+]);
+
 const staggerContainer = {
   hidden: {},
   visible: {
@@ -149,7 +154,10 @@ export default function Home() {
         }
         if (projectsRes.status === "fulfilled") {
           const data = projectsRes.value.data;
-          setProjects(Array.isArray(data) ? data.slice(0, 3) : []);
+          const visibleProjects = Array.isArray(data)
+            ? data.filter((project) => !hiddenProjectSlugs.has(project.slug))
+            : [];
+          setProjects(visibleProjects.slice(0, 3));
         }
         if (skillsRes.status === "fulfilled") {
           const fetchedSkills = skillsRes.value.data.length

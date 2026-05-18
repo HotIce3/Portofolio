@@ -1,7 +1,8 @@
-import { useRef, useState, useMemo, useEffect } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { useRef, useState, useMemo } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, Html, Billboard, Stars } from "@react-three/drei";
 import { Suspense } from "react";
+import { useSceneQuality } from "./useSceneQuality";
 import * as THREE from "three";
 
 // Animated connection beam between nodes
@@ -14,7 +15,8 @@ function Beam({ start, end, color, opacity = 0.12 }) {
 
   useFrame((state) => {
     if (ref.current) {
-      ref.current.material.opacity = opacity + Math.sin(state.clock.getElapsedTime() * 1.5) * 0.05;
+      ref.current.material.opacity =
+        opacity + Math.sin(state.clock.getElapsedTime() * 1.5) * 0.05;
     }
   });
 
@@ -31,7 +33,7 @@ function Beam({ start, end, color, opacity = 0.12 }) {
 }
 
 // Individual skill node with label
-function SkillNode({ position, name, color, scale = 1 }) {
+function SkillNode({ position, name, color, scale = 1, interactive = true }) {
   const meshRef = useRef();
   const glowRef = useRef();
   const [hovered, setHovered] = useState(false);
@@ -49,101 +51,128 @@ function SkillNode({ position, name, color, scale = 1 }) {
     }
   });
 
-  return (
-    <Float speed={1.8} rotationIntensity={0.25} floatIntensity={0.9}>
-      <group position={position}>
-        {/* Core gem */}
-        <mesh
-          ref={meshRef}
-          scale={hovered ? scale * 1.35 : scale}
-          onPointerOver={() => { setHovered(true); document.body.style.cursor = "pointer"; }}
-          onPointerOut={() => { setHovered(false); document.body.style.cursor = "default"; }}
-        >
-          <dodecahedronGeometry args={[0.38, 0]} />
-          <meshPhysicalMaterial
-            color={color}
-            metalness={0.3}
-            roughness={0.05}
-            transparent
-            opacity={hovered ? 0.95 : 0.75}
-            clearcoat={1}
-            clearcoatRoughness={0}
-            emissive={color}
-            emissiveIntensity={hovered ? 0.6 : 0.2}
-            iridescence={hovered ? 0.5 : 0}
-          />
-        </mesh>
+  const node = (
+    <group position={position}>
+      {/* Core gem */}
+      <mesh
+        ref={meshRef}
+        scale={interactive && hovered ? scale * 1.35 : scale}
+        onPointerOver={
+          interactive
+            ? () => {
+                setHovered(true);
+                document.body.style.cursor = "pointer";
+              }
+            : undefined
+        }
+        onPointerOut={
+          interactive
+            ? () => {
+                setHovered(false);
+                document.body.style.cursor = "default";
+              }
+            : undefined
+        }
+      >
+        <dodecahedronGeometry args={[0.38, 0]} />
+        <meshPhysicalMaterial
+          color={color}
+          metalness={0.3}
+          roughness={0.05}
+          transparent
+          opacity={hovered ? 0.95 : 0.75}
+          clearcoat={1}
+          clearcoatRoughness={0}
+          emissive={color}
+          emissiveIntensity={hovered ? 0.6 : 0.2}
+          iridescence={hovered ? 0.5 : 0}
+        />
+      </mesh>
 
-        {/* Glow sphere */}
-        <mesh ref={glowRef} scale={1.8}>
-          <sphereGeometry args={[0.38, 16, 16]} />
+      {/* Glow sphere */}
+      <mesh ref={glowRef} scale={1.8}>
+        <sphereGeometry args={[0.38, 16, 16]} />
+        <meshBasicMaterial
+          color={color}
+          transparent
+          opacity={0.08}
+          blending={THREE.AdditiveBlending}
+        />
+      </mesh>
+
+      {/* Orbit ring (visible on hover) */}
+      {interactive && hovered && (
+        <mesh rotation={[Math.PI / 2, 0, 0]}>
+          <torusGeometry args={[0.55, 0.02, 8, 32]} />
           <meshBasicMaterial
             color={color}
             transparent
-            opacity={0.08}
+            opacity={0.6}
             blending={THREE.AdditiveBlending}
           />
         </mesh>
+      )}
 
-        {/* Orbit ring (visible on hover) */}
-        {hovered && (
-          <mesh rotation={[Math.PI / 2, 0, 0]}>
-            <torusGeometry args={[0.55, 0.02, 8, 32]} />
-            <meshBasicMaterial
-              color={color}
-              transparent
-              opacity={0.6}
-              blending={THREE.AdditiveBlending}
-            />
-          </mesh>
-        )}
+      {/* Point light on hover */}
+      {interactive && hovered && (
+        <pointLight
+          position={[0, 0, 0]}
+          intensity={0.8}
+          color={color}
+          distance={4}
+        />
+      )}
 
-        {/* Point light on hover */}
-        {hovered && (
-          <pointLight position={[0, 0, 0]} intensity={0.8} color={color} distance={4} />
-        )}
+      {/* Label */}
+      <Billboard follow lockX={false} lockY={false} lockZ={false}>
+        <Html position={[0, -0.65, 0]} center>
+          <div
+            style={{
+              color: hovered ? "#ffffff" : "rgba(226,232,240,0.85)",
+              fontSize: hovered ? "15px" : "13px",
+              fontWeight: "700",
+              fontFamily: "Inter, sans-serif",
+              whiteSpace: "nowrap",
+              textShadow: `0 2px 8px rgba(0,0,0,0.9), 0 0 12px ${color}80`,
+              pointerEvents: "none",
+              transition: "all 0.2s",
+              letterSpacing: "0.02em",
+            }}
+          >
+            {name}
+          </div>
+        </Html>
+      </Billboard>
+    </group>
+  );
 
-        {/* Label */}
-        <Billboard follow lockX={false} lockY={false} lockZ={false}>
-          <Html position={[0, -0.65, 0]} center>
-            <div
-              style={{
-                color: hovered ? "#ffffff" : "rgba(226,232,240,0.85)",
-                fontSize: hovered ? "15px" : "13px",
-                fontWeight: "700",
-                fontFamily: "Inter, sans-serif",
-                whiteSpace: "nowrap",
-                textShadow: `0 2px 8px rgba(0,0,0,0.9), 0 0 12px ${color}80`,
-                pointerEvents: "none",
-                transition: "all 0.2s",
-                letterSpacing: "0.02em",
-              }}
-            >
-              {name}
-            </div>
-          </Html>
-        </Billboard>
-      </group>
+  if (!interactive) {
+    return node;
+  }
+
+  return (
+    <Float speed={1.8} rotationIntensity={0.25} floatIntensity={0.9}>
+      {node}
     </Float>
   );
 }
 
 const skillNodesData = [
-  { name: "React",       position: [-2.8, 1.8, 0.2],    color: "#61DAFB" },
-  { name: "Node.js",     position: [2.8, 1.4, -1.2],    color: "#339933" },
-  { name: "TypeScript",  position: [-1.2, -1.8, 0.6],   color: "#3178C6" },
-  { name: "PostgreSQL",  position: [1.8, -1.2, -0.6],   color: "#4169E1" },
-  { name: "JavaScript",  position: [0.2, 2.4, -0.6],    color: "#F7DF1E" },
-  { name: "Python",      position: [-3.2, -0.6, -1.2],  color: "#3776AB" },
-  { name: "Next.js",     position: [3.2, 0.2, 0.6],     color: "#a78bfa" },
-  { name: "Tailwind",    position: [-1.8, 0.6, 1.2],    color: "#06B6D4" },
-  { name: "Docker",      position: [0.6, -2.6, 0.2],    color: "#2496ED" },
-  { name: "Git",         position: [-3.0, 0.2, 0.6],    color: "#F05032" },
-  { name: "MongoDB",     position: [2.2, 2.4, 0.6],     color: "#47A248" },
-  { name: "Vue.js",      position: [-0.6, 1.2, -1.8],   color: "#4FC08D" },
+  { name: "React", position: [-2.8, 1.8, 0.2], color: "#61DAFB" },
+  { name: "Node.js", position: [2.8, 1.4, -1.2], color: "#339933" },
+  { name: "TypeScript", position: [-1.2, -1.8, 0.6], color: "#3178C6" },
+  { name: "PostgreSQL", position: [1.8, -1.2, -0.6], color: "#4169E1" },
+  { name: "JavaScript", position: [0.2, 2.4, -0.6], color: "#F7DF1E" },
+  { name: "Python", position: [-3.2, -0.6, -1.2], color: "#3776AB" },
+  { name: "Next.js", position: [3.2, 0.2, 0.6], color: "#a78bfa" },
+  { name: "Tailwind", position: [-1.8, 0.6, 1.2], color: "#06B6D4" },
+  { name: "Docker", position: [0.6, -2.6, 0.2], color: "#2496ED" },
+  { name: "Git", position: [-3.0, 0.2, 0.6], color: "#F05032" },
+  { name: "MongoDB", position: [2.2, 2.4, 0.6], color: "#47A248" },
+  { name: "Vue.js", position: [-0.6, 1.2, -1.8], color: "#4FC08D" },
 ];
 
-function ConstellationLines() {
+function ConstellationLines({ compact = false }) {
   const lines = useMemo(() => {
     const result = [];
     for (let i = 0; i < skillNodesData.length; i++) {
@@ -152,10 +181,10 @@ function ConstellationLines() {
         const b = skillNodesData[j];
         const dist = Math.sqrt(
           (a.position[0] - b.position[0]) ** 2 +
-          (a.position[1] - b.position[1]) ** 2 +
-          (a.position[2] - b.position[2]) ** 2
+            (a.position[1] - b.position[1]) ** 2 +
+            (a.position[2] - b.position[2]) ** 2,
         );
-        if (dist < 4.2) {
+        if (dist < (compact ? 3.6 : 4.2)) {
           result.push({
             start: a.position,
             end: b.position,
@@ -165,8 +194,8 @@ function ConstellationLines() {
         }
       }
     }
-    return result;
-  }, []);
+    return compact ? result.slice(0, 12) : result;
+  }, [compact]);
 
   return (
     <>
@@ -219,18 +248,29 @@ function Nexus() {
           blending={THREE.AdditiveBlending}
         />
       </mesh>
-      <pointLight position={[0, 0, 0]} intensity={1} color="#6366f1" distance={6} />
+      <pointLight
+        position={[0, 0, 0]}
+        intensity={1}
+        color="#6366f1"
+        distance={6}
+      />
     </group>
   );
 }
 
 export default function SkillsScene() {
+  const { canvasDpr, isLowPower } = useSceneQuality();
+  const starsCount = isLowPower ? 180 : 800;
+
   return (
-    <div style={{ width: "100%", height: "520px" }}>
+    <div style={{ width: "100%", height: "clamp(280px, 68vw, 520px)" }}>
       <Canvas
-        camera={{ position: [0, 0, 8], fov: 52 }}
-        dpr={[1, 1.5]}
-        gl={{ antialias: true, alpha: true }}
+        camera={{
+          position: isLowPower ? [0, 0, 7.2] : [0, 0, 8],
+          fov: isLowPower ? 56 : 52,
+        }}
+        dpr={canvasDpr}
+        gl={{ antialias: !isLowPower, alpha: true }}
         style={{ background: "transparent" }}
       >
         <Suspense fallback={null}>
@@ -239,13 +279,21 @@ export default function SkillsScene() {
           <pointLight position={[-6, -6, 6]} intensity={0.5} color="#a78bfa" />
           <pointLight position={[0, 4, -4]} intensity={0.4} color="#60a5fa" />
 
-          <Stars radius={50} depth={30} count={800} factor={3} saturation={0.4} fade speed={0.3} />
+          <Stars
+            radius={isLowPower ? 38 : 50}
+            depth={isLowPower ? 18 : 30}
+            count={starsCount}
+            factor={isLowPower ? 2 : 3}
+            saturation={0.4}
+            fade
+            speed={isLowPower ? 0.15 : 0.3}
+          />
 
-          <ConstellationLines />
+          <ConstellationLines compact={isLowPower} />
           <Nexus />
 
           {skillNodesData.map((skill) => (
-            <SkillNode key={skill.name} {...skill} />
+            <SkillNode key={skill.name} {...skill} interactive={!isLowPower} />
           ))}
         </Suspense>
       </Canvas>

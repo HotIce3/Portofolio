@@ -67,7 +67,7 @@ export default function ProjectDetail() {
         <meta name="description" content={description} />
       </Helmet>
 
-      <section className="section pt-24 md:pt-32">
+      <section className="section pt-20 md:pt-28">
         <div className="container-custom max-w-4xl">
           {/* Back Button */}
           <motion.div
@@ -112,7 +112,7 @@ export default function ProjectDetail() {
             transition={{ delay: 0.1 }}
           >
             {/* Category & Featured Badge */}
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex flex-wrap items-center gap-3 mb-4">
               {project.category && (
                 <span className="px-3 py-1 text-sm font-medium bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full">
                   {project.category}
@@ -153,13 +153,13 @@ export default function ProjectDetail() {
             </div>
 
             {/* Links */}
-            <div className="flex flex-wrap gap-4 pt-8 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex flex-col sm:flex-row flex-wrap gap-4 pt-8 border-t border-gray-200 dark:border-gray-700">
               {project.live_url && (
                 <a
                   href={project.live_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-primary"
+                  className="btn-primary w-full sm:w-auto"
                 >
                   <FiExternalLink className="mr-2" />
                   {t("projects.liveDemo")}
@@ -170,7 +170,7 @@ export default function ProjectDetail() {
                   href={project.github_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-secondary"
+                  className="btn-secondary w-full sm:w-auto"
                 >
                   <FiGithub className="mr-2" />
                   {t("projects.viewCode")}

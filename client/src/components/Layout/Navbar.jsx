@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiMenu, FiX, FiGlobe } from "react-icons/fi";
+import { FiMenu, FiX } from "react-icons/fi";
 import { useLanguage } from "../../contexts/LanguageContext";
 
 export default function Navbar() {
   const { t } = useTranslation();
-  const { language, toggleLanguage, currentLanguage } = useLanguage();
+  const { toggleLanguage, currentLanguage } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
@@ -34,9 +34,7 @@ export default function Navbar() {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? "navbar-3d-scrolled"
-          : "navbar-3d-transparent"
+        scrolled ? "navbar-3d-scrolled" : "navbar-3d-transparent"
       }`}
       style={{
         background: scrolled ? "rgba(10, 10, 26, 0.85)" : "transparent",
@@ -94,8 +92,9 @@ export default function Navbar() {
             <div className="flex items-center gap-2">
               <button
                 onClick={toggleLanguage}
-                className="p-2 rounded-lg transition-colors hover:bg-white/10"
+                className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl p-3 transition-colors hover:bg-white/10"
                 title={t("language.toggle")}
+                aria-label={t("language.toggle")}
               >
                 <span className="text-lg">{currentLanguage.flag}</span>
               </button>
@@ -106,14 +105,19 @@ export default function Navbar() {
           <div className="flex items-center gap-2 md:hidden">
             <button
               onClick={toggleLanguage}
-              className="p-2 rounded-lg transition-colors hover:bg-white/10"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl p-3 transition-colors hover:bg-white/10"
+              title={t("language.toggle")}
+              aria-label={t("language.toggle")}
             >
               <span className="text-lg">{currentLanguage.flag}</span>
             </button>
 
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 rounded-lg transition-colors hover:bg-white/10 text-gray-200"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl p-3 text-gray-200 transition-colors hover:bg-white/10"
+              aria-label={isOpen ? "Tutup menu navigasi" : "Buka menu navigasi"}
+              aria-expanded={isOpen}
+              aria-controls="mobile-navigation"
             >
               {isOpen ? (
                 <FiX className="w-6 h-6" />
@@ -128,18 +132,19 @@ export default function Navbar() {
         <AnimatePresence>
           {isOpen && (
             <motion.div
+              id="mobile-navigation"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden border-t border-white/10 bg-[#0a0a1a]/95 backdrop-blur-xl"
+              className="md:hidden mt-3 overflow-hidden rounded-2xl border border-white/10 bg-[#0a0a1a]/95 shadow-2xl backdrop-blur-xl"
             >
-              <ul className="py-4 space-y-2">
+              <ul className="space-y-1 p-2">
                 {navLinks.map((link) => (
                   <li key={link.path}>
                     <NavLink
                       to={link.path}
                       className={({ isActive }) =>
-                        `block px-4 py-2 font-medium transition-colors ${
+                        `block w-full rounded-xl px-4 py-3 text-left text-base font-medium transition-colors ${
                           isActive
                             ? "text-violet-400 bg-violet-900/20"
                             : "text-gray-300 hover:bg-white/5"

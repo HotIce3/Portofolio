@@ -10,6 +10,11 @@ import LoadingSpinner from "../components/UI/LoadingSpinner";
 
 const ProjectsScene = lazy(() => import("../components/three/ProjectsScene"));
 
+const hiddenProjectSlugs = new Set([
+  "e-commerce-platform",
+  "task-management-app",
+]);
+
 export default function Projects() {
   const { t } = useTranslation();
   const { language } = useLanguage();
@@ -23,7 +28,11 @@ export default function Projects() {
     const fetchProjects = async () => {
       try {
         const response = await projectsApi.getAll();
-        const data = Array.isArray(response.data) ? response.data : [];
+        const data = Array.isArray(response.data)
+          ? response.data.filter(
+              (project) => !hiddenProjectSlugs.has(project.slug),
+            )
+          : [];
         setProjects(data);
         setFilteredProjects(data);
 
