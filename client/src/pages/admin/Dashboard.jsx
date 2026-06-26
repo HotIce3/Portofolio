@@ -18,7 +18,7 @@ export default function Dashboard() {
       try {
         const [statsRes, messagesRes] = await Promise.all([
           adminApi.getStats(),
-          contactApi.getAll({ limit: 5 }),
+          contactApi.getAll(),
         ]);
         setStats(statsRes.data);
         setRecentMessages(messagesRes.data.slice(0, 5));

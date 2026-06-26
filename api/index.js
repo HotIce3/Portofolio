@@ -101,7 +101,7 @@ app.get("/api/projects/:slug", async (req, res) => {
     const images = await sql`
       SELECT * FROM project_images 
       WHERE project_id = ${project[0].id} 
-      ORDER BY display_order
+      ORDER BY sort_order
     `;
 
     res.json({ ...project[0], images });
@@ -139,6 +139,10 @@ app.post("/api/auth/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password are required" });
+    }
+
     const users = await sql`SELECT * FROM users WHERE email = ${email}`;
 
     if (users.length === 0) {
@@ -158,7 +162,7 @@ app.post("/api/auth/login", async (req, res) => {
     const jwt = await import("jsonwebtoken");
     const token = jwt.default.sign(
       { id: user.id, email: user.email, role: user.role },
-      process.env.JWT_SECRET || "fallback-secret",
+      process.env.JWT_SECRET,
       { expiresIn: "7d" },
     );
 
@@ -188,7 +192,7 @@ const authMiddleware = async (req, res, next) => {
     const jwt = await import("jsonwebtoken");
     const decoded = jwt.default.verify(
       token,
-      process.env.JWT_SECRET || "fallback-secret",
+      process.env.JWT_SECRET,
     );
     req.user = decoded;
     next();
@@ -212,20 +216,26 @@ app.post("/api/admin/projects", authMiddleware, async (req, res) => {
   try {
     const {
       title,
+      title_id,
       slug,
       description,
+      description_id,
       content,
+      content_id,
       thumbnail,
       tech_stack,
       demo_url,
       github_url,
-      is_featured,
+      category,
+      featured,
       is_published,
+      sort_order,
+      status,
     } = req.body;
 
     const result = await sql`
-      INSERT INTO projects (title, slug, description, content, thumbnail, tech_stack, demo_url, github_url, is_featured, is_published)
-      VALUES (${title}, ${slug}, ${description}, ${content || null}, ${thumbnail || null}, ${tech_stack || []}, ${demo_url || null}, ${github_url || null}, ${is_featured || false}, ${is_published || false})
+      INSERT INTO projects (title, title_id, slug, description, description_id, content, content_id, thumbnail, tech_stack, demo_url, github_url, category, featured, is_published, sort_order, status)
+      VALUES (${title}, ${title_id || null}, ${slug}, ${description}, ${description_id || null}, ${content || null}, ${content_id || null}, ${thumbnail || null}, ${tech_stack || []}, ${demo_url || null}, ${github_url || null}, ${category || null}, ${featured || false}, ${is_published !== undefined ? is_published : true}, ${sort_order || 0}, ${status || 'published'})
       RETURNING *
     `;
 
@@ -242,22 +252,29 @@ app.put("/api/admin/projects/:id", authMiddleware, async (req, res) => {
     const { id } = req.params;
     const {
       title,
+      title_id,
       slug,
       description,
+      description_id,
       content,
+      content_id,
       thumbnail,
       tech_stack,
       demo_url,
       github_url,
-      is_featured,
+      category,
+      featured,
       is_published,
+      sort_order,
+      status,
     } = req.body;
 
     const result = await sql`
       UPDATE projects 
-      SET title = ${title}, slug = ${slug}, description = ${description}, content = ${content || null}, 
-          thumbnail = ${thumbnail || null}, tech_stack = ${tech_stack || []}, demo_url = ${demo_url || null}, 
-          github_url = ${github_url || null}, is_featured = ${is_featured || false}, is_published = ${is_published || false},
+      SET title = ${title}, title_id = ${title_id || null}, slug = ${slug}, description = ${description}, description_id = ${description_id || null},
+          content = ${content || null}, content_id = ${content_id || null}, thumbnail = ${thumbnail || null}, tech_stack = ${tech_stack || []}, 
+          demo_url = ${demo_url || null}, github_url = ${github_url || null}, category = ${category || null}, featured = ${featured || false}, 
+          is_published = ${is_published !== undefined ? is_published : true}, sort_order = ${sort_order || 0}, status = ${status || 'published'},
           updated_at = NOW()
       WHERE id = ${id}
       RETURNING *
@@ -335,12 +352,16 @@ app.put("/api/admin/profile", authMiddleware, async (req, res) => {
       name,
       title,
       bio,
-      avatar,
+      avatar_url,
       resume_url,
       location,
       email,
       phone,
-      social_links,
+      github_url,
+      linkedin_url,
+      twitter_url,
+      instagram_url,
+      website_url,
     } = req.body;
 
     const existing = await sql`SELECT id FROM profile LIMIT 1`;
@@ -349,17 +370,20 @@ app.put("/api/admin/profile", authMiddleware, async (req, res) => {
     if (existing.length > 0) {
       result = await sql`
         UPDATE profile 
-        SET name = ${name}, title = ${title}, bio = ${bio || null}, avatar = ${avatar || null},
+        SET name = ${name}, title = ${title}, bio = ${bio || null}, avatar_url = ${avatar_url || null},
             resume_url = ${resume_url || null}, location = ${location || null}, email = ${email},
-            phone = ${phone || null}, social_links = ${social_links || {}}, updated_at = NOW()
+            phone = ${phone || null}, github_url = ${github_url || null}, linkedin_url = ${linkedin_url || null},
+            twitter_url = ${twitter_url || null}, instagram_url = ${instagram_url || null}, website_url = ${website_url || null},
+            updated_at = NOW()
         WHERE id = ${existing[0].id}
         RETURNING *
       `;
     } else {
       result = await sql`
-        INSERT INTO profile (name, title, bio, avatar, resume_url, location, email, phone, social_links)
-        VALUES (${name}, ${title}, ${bio || null}, ${avatar || null}, ${resume_url || null}, 
-                ${location || null}, ${email}, ${phone || null}, ${social_links || {}})
+        INSERT INTO profile (name, title, bio, avatar_url, resume_url, location, email, phone, github_url, linkedin_url, twitter_url, instagram_url, website_url)
+        VALUES (${name}, ${title}, ${bio || null}, ${avatar_url || null}, ${resume_url || null}, 
+                ${location || null}, ${email}, ${phone || null}, ${github_url || null}, ${linkedin_url || null},
+                ${twitter_url || null}, ${instagram_url || null}, ${website_url || null})
         RETURNING *
       `;
     }
@@ -411,12 +435,17 @@ app.get("/api/migrate", async (req, res) => {
         name VARCHAR(255) NOT NULL,
         title VARCHAR(255),
         bio TEXT,
-        avatar VARCHAR(500),
-        resume_url VARCHAR(500),
-        location VARCHAR(255),
+        bio_id TEXT,
         email VARCHAR(255),
         phone VARCHAR(50),
-        social_links JSONB DEFAULT '{}',
+        location VARCHAR(255),
+        avatar_url VARCHAR(500),
+        resume_url VARCHAR(500),
+        github_url VARCHAR(255),
+        linkedin_url VARCHAR(255),
+        twitter_url VARCHAR(255),
+        instagram_url VARCHAR(255),
+        website_url VARCHAR(255),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
@@ -437,15 +466,21 @@ app.get("/api/migrate", async (req, res) => {
       CREATE TABLE IF NOT EXISTS projects (
         id SERIAL PRIMARY KEY,
         title VARCHAR(255) NOT NULL,
+        title_id VARCHAR(255),
         slug VARCHAR(255) UNIQUE NOT NULL,
         description TEXT,
+        description_id TEXT,
         content TEXT,
+        content_id TEXT,
         thumbnail VARCHAR(500),
-        tech_stack TEXT[] DEFAULT '{}',
         demo_url VARCHAR(500),
         github_url VARCHAR(500),
-        is_featured BOOLEAN DEFAULT false,
-        is_published BOOLEAN DEFAULT false,
+        tech_stack TEXT[] DEFAULT '{}',
+        category VARCHAR(100),
+        featured BOOLEAN DEFAULT false,
+        is_published BOOLEAN DEFAULT true,
+        sort_order INTEGER DEFAULT 0,
+        status VARCHAR(50) DEFAULT 'published',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
@@ -457,7 +492,7 @@ app.get("/api/migrate", async (req, res) => {
         project_id INTEGER REFERENCES projects(id) ON DELETE CASCADE,
         image_url VARCHAR(500) NOT NULL,
         caption VARCHAR(255),
-        display_order INTEGER DEFAULT 0,
+        sort_order INTEGER DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `;

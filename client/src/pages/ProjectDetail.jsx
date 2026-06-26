@@ -90,9 +90,9 @@ export default function ProjectDetail() {
             animate={{ opacity: 1, y: 0 }}
             className="relative h-64 md:h-96 rounded-2xl overflow-hidden mb-8"
           >
-            {project.thumbnail_url ? (
+            {project.thumbnail ? (
               <img
-                src={project.thumbnail_url}
+                src={project.thumbnail}
                 alt={title}
                 className="w-full h-full object-cover"
               />
@@ -141,7 +141,7 @@ export default function ProjectDetail() {
                 {t("projects.technologies")}
               </h2>
               <div className="flex flex-wrap gap-3">
-                {project.technologies?.map((tech) => (
+                {project.tech_stack?.map((tech) => (
                   <span
                     key={tech}
                     className="px-4 py-2 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded-lg font-medium"
@@ -154,9 +154,9 @@ export default function ProjectDetail() {
 
             {/* Links */}
             <div className="flex flex-col sm:flex-row flex-wrap gap-4 pt-8 border-t border-gray-200 dark:border-gray-700">
-              {project.live_url && (
+              {project.demo_url && (
                 <a
-                  href={project.live_url}
+                  href={project.demo_url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-primary w-full sm:w-auto"

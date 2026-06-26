@@ -36,6 +36,7 @@ import {
 import { TbApi } from "react-icons/tb";
 import { profileApi, projectsApi } from "../services/api";
 import { useLanguage } from "../contexts/LanguageContext";
+import { filterVisibleProjects } from "../data/hiddenProjects";
 import LoadingSpinner from "../components/UI/LoadingSpinner";
 
 import HeroScene from "../components/three/HeroScene";
@@ -50,11 +51,6 @@ const fadeUp = {
     transition: { duration: 0.6, delay: i * 0.1, ease: "easeOut" },
   }),
 };
-
-const hiddenProjectSlugs = new Set([
-  "e-commerce-platform",
-  "task-management-app",
-]);
 
 const staggerContainer = {
   hidden: {},
@@ -144,7 +140,7 @@ export default function Home() {
       try {
         const [profileRes, projectsRes, skillsRes] = await Promise.allSettled([
           profileApi.get(),
-          projectsApi.getAll({ featured: true }),
+          projectsApi.getAll({ featured: true, status: "published" }),
           profileApi.getSkills(),
         ]);
         if (profileRes.status === "fulfilled") {
@@ -153,10 +149,7 @@ export default function Home() {
           setProfile({ ...fallbackProfile, ...(normalizedProfile || {}) });
         }
         if (projectsRes.status === "fulfilled") {
-          const data = projectsRes.value.data;
-          const visibleProjects = Array.isArray(data)
-            ? data.filter((project) => !hiddenProjectSlugs.has(project.slug))
-            : [];
+          const visibleProjects = filterVisibleProjects(projectsRes.value.data);
           setProjects(visibleProjects.slice(0, 3));
         }
         if (skillsRes.status === "fulfilled") {

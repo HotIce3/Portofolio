@@ -5,17 +5,17 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(() => localStorage.getItem("token"));
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Interceptor handles token → just fetch user
+    const token = localStorage.getItem("token");
     if (token) {
-      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       fetchUser();
     } else {
       setLoading(false);
     }
-  }, [token]);
+  }, []);
 
   const fetchUser = async () => {
     try {
@@ -34,8 +34,6 @@ export function AuthProvider({ children }) {
     const { token: newToken, user: userData } = response.data;
 
     localStorage.setItem("token", newToken);
-    api.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
-    setToken(newToken);
     setUser(userData);
 
     return userData;
@@ -50,8 +48,6 @@ export function AuthProvider({ children }) {
     const { token: newToken, user: userData } = response.data;
 
     localStorage.setItem("token", newToken);
-    api.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
-    setToken(newToken);
     setUser(userData);
 
     return userData;
@@ -59,8 +55,6 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     localStorage.removeItem("token");
-    delete api.defaults.headers.common["Authorization"];
-    setToken(null);
     setUser(null);
   };
 
@@ -75,7 +69,6 @@ export function AuthProvider({ children }) {
     <AuthContext.Provider
       value={{
         user,
-        token,
         loading,
         isAuthenticated,
         isAdmin,

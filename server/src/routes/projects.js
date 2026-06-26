@@ -8,22 +8,27 @@ const router = express.Router();
 // Get all projects (public)
 router.get("/", async (req, res) => {
   try {
-    const { featured, category, status = "published" } = req.query;
+    const { featured, category, status } = req.query;
 
-    let sql = "SELECT * FROM projects WHERE status = $1";
-    const params = [status];
-    let paramIndex = 2;
+    const conditions = [];
+    const params = [];
 
+    if (status) {
+      params.push(status);
+      conditions.push(`status = $${params.length}`);
+    }
     if (featured === "true") {
-      sql += ` AND featured = true`;
+      conditions.push("featured = true");
     }
-
     if (category) {
-      sql += ` AND category = $${paramIndex}`;
       params.push(category);
-      paramIndex++;
+      conditions.push(`category = $${params.length}`);
     }
 
+    let sql = "SELECT * FROM projects";
+    if (conditions.length) {
+      sql += ` WHERE ${conditions.join(" AND ")}`;
+    }
     sql += " ORDER BY sort_order ASC, created_at DESC";
 
     const result = await query(sql, params);

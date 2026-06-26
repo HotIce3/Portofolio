@@ -70,6 +70,19 @@ router.get("/", authenticateToken, isAdmin, async (req, res) => {
   }
 });
 
+// Get unread count (admin only) — MUST be before /:id to avoid route shadowing
+router.get("/stats/unread", authenticateToken, isAdmin, async (req, res) => {
+  try {
+    const result = await query(
+      "SELECT COUNT(*) FROM contact_messages WHERE is_read = false",
+    );
+    res.json({ unread: parseInt(result.rows[0].count) });
+  } catch (error) {
+    console.error("Get unread count error:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 // Get single message (admin only)
 router.get("/:id", authenticateToken, isAdmin, async (req, res) => {
   try {
@@ -98,7 +111,7 @@ router.patch("/:id/read", authenticateToken, isAdmin, async (req, res) => {
 
     const result = await query(
       "UPDATE contact_messages SET is_read = $1 WHERE id = $2 RETURNING *",
-      [is_read !== false, id],
+      [is_read === true || is_read === "true", id],
     );
 
     if (result.rows.length === 0) {
@@ -129,19 +142,6 @@ router.delete("/:id", authenticateToken, isAdmin, async (req, res) => {
     res.json({ message: "Message deleted successfully" });
   } catch (error) {
     console.error("Delete message error:", error);
-    res.status(500).json({ error: "Server error" });
-  }
-});
-
-// Get unread count (admin only)
-router.get("/stats/unread", authenticateToken, isAdmin, async (req, res) => {
-  try {
-    const result = await query(
-      "SELECT COUNT(*) FROM contact_messages WHERE is_read = false",
-    );
-    res.json({ unread: parseInt(result.rows[0].count) });
-  } catch (error) {
-    console.error("Get unread count error:", error);
     res.status(500).json({ error: "Server error" });
   }
 });

@@ -6,12 +6,10 @@ import { motion } from "framer-motion";
 import { FiMail, FiLock, FiArrowLeft, FiLogIn } from "react-icons/fi";
 import toast from "react-hot-toast";
 import { useAuth } from "../contexts/AuthContext";
-import { useTheme } from "../contexts/ThemeContext";
 
 export default function Login() {
   const { t } = useTranslation();
   const { login } = useAuth();
-  const { darkMode, toggleDarkMode } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/admin";

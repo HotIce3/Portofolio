@@ -26,10 +26,10 @@ export default function AdminProjects() {
     slug: "",
     description: "",
     description_id: "",
-    thumbnail_url: "",
-    live_url: "",
+    thumbnail: "",
+    demo_url: "",
     github_url: "",
-    technologies: "",
+    tech_stack: "",
     category: "",
     featured: false,
     status: "published",
@@ -102,10 +102,10 @@ export default function AdminProjects() {
       slug: project.slug || "",
       description: project.description || "",
       description_id: project.description_id || "",
-      thumbnail_url: project.thumbnail_url || "",
-      live_url: project.live_url || "",
+      thumbnail: project.thumbnail || "",
+      demo_url: project.demo_url || "",
       github_url: project.github_url || "",
-      technologies: project.technologies?.join(", ") || "",
+      tech_stack: project.tech_stack?.join(", ") || "",
       category: project.category || "",
       featured: project.featured || false,
       status: project.status || "published",
@@ -118,7 +118,7 @@ export default function AdminProjects() {
 
     const data = {
       ...formData,
-      technologies: formData.technologies
+      tech_stack: formData.tech_stack
         .split(",")
         .map((t) => t.trim())
         .filter(Boolean),
@@ -190,9 +190,9 @@ export default function AdminProjects() {
             >
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center flex-shrink-0">
-                  {project.thumbnail_url ? (
+                  {project.thumbnail ? (
                     <img
-                      src={project.thumbnail_url}
+                      src={project.thumbnail}
                       alt={project.title}
                       className="w-full h-full object-cover rounded-lg"
                     />
@@ -232,9 +232,9 @@ export default function AdminProjects() {
                         {project.category}
                       </span>
                     )}
-                    {project.live_url && (
+                    {project.demo_url && (
                       <a
-                        href={project.live_url}
+                        href={project.demo_url}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-gray-400 hover:text-primary-600"
@@ -373,8 +373,8 @@ export default function AdminProjects() {
                 <label className="label">Thumbnail URL</label>
                 <input
                   type="url"
-                  name="thumbnail_url"
-                  value={formData.thumbnail_url}
+                  name="thumbnail"
+                  value={formData.thumbnail}
                   onChange={handleChange}
                   className="input"
                 />
@@ -383,10 +383,10 @@ export default function AdminProjects() {
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label className="label">Live URL</label>
-                  <input
-                    type="url"
-                    name="live_url"
-                    value={formData.live_url}
+                    <input
+                      type="url"
+                      name="demo_url"
+                      value={formData.demo_url}
                     onChange={handleChange}
                     className="input"
                   />
@@ -407,8 +407,8 @@ export default function AdminProjects() {
                 <label className="label">Technologies (comma separated)</label>
                 <input
                   type="text"
-                  name="technologies"
-                  value={formData.technologies}
+                  name="tech_stack"
+                  value={formData.tech_stack}
                   onChange={handleChange}
                   placeholder="React, Node.js, PostgreSQL"
                   className="input"

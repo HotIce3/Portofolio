@@ -2,10 +2,34 @@ import { useRef, useMemo, useEffect } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
+const vertexShader = /* glsl */ `
+  attribute float size;
+  attribute vec3 customColor;
+  uniform float uTime;
+  varying vec3 vColor;
+  void main() {
+    vColor = customColor;
+    vec3 pos = position;
+    pos.y += sin(uTime * 0.5 + position.x * 0.3 + position.z * 0.3) * 0.12;
+    vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+    gl_PointSize = size * (200.0 / -mvPosition.z);
+    gl_Position = projectionMatrix * mvPosition;
+  }
+`;
+
+const fragmentShader = /* glsl */ `
+  varying vec3 vColor;
+  void main() {
+    float d = length(gl_PointCoord - vec2(0.5));
+    if (d > 0.5) discard;
+    float alpha = 1.0 - smoothstep(0.2, 0.5, d);
+    gl_FragColor = vec4(vColor, alpha * 0.85);
+  }
+`;
+
 export default function ParticleField({ count = 2500 }) {
   const pointsRef = useRef();
   const mouseRef = useRef({ x: 0, y: 0 });
-  const { viewport } = useThree();
 
   useEffect(() => {
     const onMouseMove = (e) => {
@@ -33,8 +57,6 @@ export default function ParticleField({ count = 2500 }) {
 
     for (let i = 0; i < count; i++) {
       const i3 = i * 3;
-
-      // Galaxy spiral distribution
       const arm = Math.floor(Math.random() * 3);
       const radius = Math.random() * 18 + 1;
       const spinAngle = radius * 0.5;
@@ -43,9 +65,9 @@ export default function ParticleField({ count = 2500 }) {
 
       positions[i3] = Math.cos(branchAngle + spinAngle) * radius + randomSpread;
       positions[i3 + 1] = (Math.random() - 0.5) * 5 + randomSpread;
-      positions[i3 + 2] = Math.sin(branchAngle + spinAngle) * radius + randomSpread;
+      positions[i3 + 2] =
+        Math.sin(branchAngle + spinAngle) * radius + randomSpread;
 
-      // Color biased toward center = brighter
       const mixFactor = 1 - radius / 20;
       const c1 = palette[Math.floor(Math.random() * palette.length)];
       const c2 = palette[Math.floor(Math.random() * palette.length)];
@@ -64,46 +86,34 @@ export default function ParticleField({ count = 2500 }) {
   const geometry = useMemo(() => {
     const geo = new THREE.BufferGeometry();
     geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    geo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+    geo.setAttribute("customColor", new THREE.BufferAttribute(colors, 3));
     geo.setAttribute("size", new THREE.BufferAttribute(sizes, 1));
     return geo;
   }, [positions, colors, sizes]);
 
   const material = useMemo(
     () =>
-      new THREE.PointsMaterial({
-        size: 0.07,
-        vertexColors: true,
+      new THREE.ShaderMaterial({
+        vertexShader,
+        fragmentShader,
+        uniforms: { uTime: { value: 0 } },
         transparent: true,
-        opacity: 0.85,
-        sizeAttenuation: true,
-        blending: THREE.AdditiveBlending,
         depthWrite: false,
+        blending: THREE.AdditiveBlending,
       }),
-    []
+    [],
   );
 
   useFrame((state) => {
     const time = state.clock.getElapsedTime();
+    material.uniforms.uTime.value = time;
     if (pointsRef.current) {
-      // Slow galaxy rotation
       pointsRef.current.rotation.y = time * 0.04;
-
-      // Subtle mouse parallax
       pointsRef.current.rotation.x = THREE.MathUtils.lerp(
         pointsRef.current.rotation.x,
         mouseRef.current.y * 0.08,
-        0.02
+        0.02,
       );
-
-      // Breathing effect
-      const posAttr = pointsRef.current.geometry.attributes.position;
-      const arr = posAttr.array;
-      for (let i = 0; i < count; i++) {
-        const i3 = i * 3;
-        arr[i3 + 1] += Math.sin(time * 0.5 + i * 0.008) * 0.001;
-      }
-      posAttr.needsUpdate = true;
     }
   });
 

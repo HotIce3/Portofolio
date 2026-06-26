@@ -57,7 +57,7 @@ export const projectsApi = {
 export const contactApi = {
   send: (data) => api.post("/contact", data),
   getAll: (params) => api.get("/contact", { params }),
-  markAsRead: (id) => api.patch(`/contact/${id}/read`),
+  markAsRead: (id, data) => api.patch(`/contact/${id}/read`, data),
   delete: (id) => api.delete(`/contact/${id}`),
   getUnreadCount: () => api.get("/contact/stats/unread"),
 };

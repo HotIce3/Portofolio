@@ -47,7 +47,7 @@ export default function AdminSettings() {
     setSaving(true);
     try {
       for (const [key, value] of Object.entries(settings)) {
-        await adminApi.updateSetting(key, value);
+        await adminApi.updateSetting(key, value, typeof value);
       }
       toast.success("Settings saved successfully");
     } catch (error) {
