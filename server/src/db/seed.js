@@ -132,22 +132,22 @@ const seed = async () => {
         is_published: true,
       },
       {
-        title: "Kopi Nusantara Brew",
-        title_id: "Kopi Nusantara Brew",
-        slug: "kopi-nusantara-brew",
+        title: "Codex Coffeeshop",
+        title_id: "Codex Coffeeshop",
+        slug: "codex-coffeeshop",
         description:
-          "Website coffee shop premium dengan pengalaman kopi autentik Nusantara. Menampilkan menu, sistem pemesanan, dan desain elegan dengan tema kopi.",
+          "A modern full-stack coffee shop POS application with admin panel, sales dashboard analytics, JWT + OAuth authentication, and PostgreSQL via Neon.",
         description_id:
-          "Website coffee shop premium dengan pengalaman kopi autentik Nusantara. Menampilkan menu, sistem pemesanan, dan desain elegan dengan tema kopi.",
+          "Aplikasi POS coffee shop full-stack modern dengan admin panel, dashboard analytics penjualan, autentikasi JWT + OAuth, dan dukungan PostgreSQL via Neon.",
         content:
-          "Kopi Nusantara Brew adalah website untuk coffee shop yang menawarkan pengalaman kopi premium dengan cita rasa autentik Nusantara. Website ini memiliki fitur menu interaktif, keranjang belanja, mode gelap/terang, dan desain responsif yang menawan.",
+          "Codex Coffeeshop is a modern full-stack coffee shop POS application featuring a customer-facing menu with live search, cart management, and checkout with promo validation. The admin panel includes a sales dashboard with revenue charts, top products, order management, and full CRUD for products, categories, orders, users, and promos. Authentication supports JWT (email-password) and OAuth 2.0 (Google & GitHub) via Passport.js.",
         content_id:
-          "Kopi Nusantara Brew adalah website untuk coffee shop yang menawarkan pengalaman kopi premium dengan cita rasa autentik Nusantara. Website ini memiliki fitur menu interaktif, keranjang belanja, mode gelap/terang, dan desain responsif yang menawan.",
+          "Codex Coffeeshop adalah aplikasi POS coffee shop full-stack modern dengan menu customer yang dilengkapi live search, manajemen keranjang, dan checkout dengan validasi promo. Admin panel dilengkapi dashboard penjualan dengan grafik revenue, produk terlaris, manajemen pesanan, dan CRUD lengkap untuk produk, kategori, pesanan, pengguna, dan promo. Autentikasi mendukung JWT (email-password) dan OAuth 2.0 (Google & GitHub) via Passport.js.",
         thumbnail:
-          "https://api.microlink.io/?url=https://website-portofolio-ivory-mu.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
-        demo_url: "https://website-portofolio-ivory-mu.vercel.app/",
-        github_url: "https://website-portofolio-ivory-mu.vercel.app/",
-        tech_stack: ["React", "Tailwind CSS", "Framer Motion", "Vite"],
+          "https://api.microlink.io/?url=https://codex-coffeeshop.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
+        demo_url: "https://codex-coffeeshop.vercel.app/",
+        github_url: "https://github.com/Filbert-Lab/Codex-Coffeeshop",
+        tech_stack: ["React", "Vite", "Tailwind CSS", "Express.js", "Sequelize", "PostgreSQL"],
         category: "Web App",
         featured: true,
         is_published: true,
